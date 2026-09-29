@@ -81,6 +81,12 @@ td b{font-size:11px}
 .action-card strong{margin-left:auto;color:#9aa4b5;font-size:20px;font-weight:500}
 .action-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:17px}
 .edit-icon{background:#eef2ff}.msg-icon{background:#eaf9f2}
+
+select{outline:none}
+.message-preview{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:#fbfcff}
+.message-preview .avatar{width:38px;height:38px;border-radius:10px}
+.message-preview b{display:block;font-size:12px}
+.message-preview small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
 .message-modal{width:min(500px,100%)}
 .message-modal-list{min-height:230px;max-height:330px}
 @media(max-width:650px){
@@ -142,7 +148,7 @@ td b{font-size:11px}
     <div class="section-head">
       <div>
         <h2 class="section-title">🧾 Transactions</h2>
-        <div class="section-note">Customer ke items yahin add honge aur portal mein live dikhenge.</div>
+        <div class="section-note">pcs • kg • gm • ltr • ml • m • cm • box • pack • dozen — portal mein live.</div>
       </div>
       <button id="openAddItem" class="btn add">＋ Add Item</button>
     </div>
@@ -153,7 +159,7 @@ td b{font-size:11px}
             <th>Date & Time</th>
             <th>Item</th>
             <th>Original Price</th>
-            <th>Qty</th>
+            <th>Qty / Unit</th>
             <th>Total</th>
           </tr>
         </thead>
@@ -199,9 +205,13 @@ td b{font-size:11px}
     <div class="modal-head">
       <div>
         <h3>💬 Message Customer</h3>
-        <div class="section-note">Send a message directly to this customer.</div>
+        <div id="messageCustomerName" class="section-note">Send a message directly to this customer.</div>
       </div>
       <button class="close" id="closeMessage">×</button>
+    </div>
+    <div class="message-preview">
+      <img id="messageAvatar" class="avatar" alt="">
+      <div><b id="messageCustomerName2">Customer</b><small id="messageCustomerMobile">—</small></div>
     </div>
     <div id="messages" class="msgs message-modal-list"><div class="empty">No messages yet.</div></div>
     <div class="message-send">
@@ -230,11 +240,22 @@ td b{font-size:11px}
         </div>
         <div class="field">
           <label>Quantity</label>
-          <input id="itemQty" type="number" min="1" step="1" value="1">
+          <input id="itemQty" type="number" min="0.001" step="0.001" value="1">
         </div>
         <div class="field">
           <label>Unit</label>
-          <input id="itemUnit" value="pcs" placeholder="pcs">
+          <select id="itemUnit" style="width:100%;border:1px solid #dce2eb;border-radius:9px;padding:9px 10px;font-size:12px;background:#fff">
+            <option value="pcs">Pieces (pcs)</option>
+            <option value="kg">Kilogram (kg)</option>
+            <option value="gm">Gram (gm)</option>
+            <option value="ltr">Litre (ltr)</option>
+            <option value="ml">Millilitre (ml)</option>
+            <option value="m">Metre (m)</option>
+            <option value="cm">Centimetre (cm)</option>
+            <option value="box">Box</option>
+            <option value="pack">Pack</option>
+            <option value="dozen">Dozen</option>
+          </select>
         </div>
       </div>
       <div style="margin-top:12px;background:#f6f8fc;border-radius:10px;padding:11px;font-size:12px">
@@ -315,6 +336,13 @@ function renderCustomer(){
   $("photoInput").value=c.photo||"";
   $("pinInput").value=c.customerPin||"";
   $("emailInput").value=c.email||"";
+  if($("messageCustomerName")) $("messageCustomerName").textContent="Message "+(c.name||"Customer");
+  if($("messageCustomerName2")) $("messageCustomerName2").textContent=c.name||"Customer";
+  if($("messageCustomerMobile")) $("messageCustomerMobile").textContent=c.mobile||"";
+  if($("messageAvatar")) {
+    $("messageAvatar").src=c.photo||fallbackAvatar(c.name);
+    $("messageAvatar").onerror=()=>{$("messageAvatar").src=fallbackAvatar(c.name)};
+  }
 }
 function renderTransactions(){
   const body=$("transactionBody");
@@ -327,13 +355,14 @@ function renderTransactions(){
   body.innerHTML=transactions.map(t=>{
     const price=Number(t.price??t.mrp??t.originalPrice)||0;
     const qty=Number(t.qty??t.quantity)||1;
+    const unit=clean(t.unit||"pcs");
     const total=Number(t.total);
     const finalTotal=Number.isFinite(total)&&total>0?total:price*qty;
     return `<tr>
       <td>${esc(t.date||t.dateTime||"—")}</td>
       <td><b>${esc(t.item||t.itemName||t.name||"Item")}</b></td>
       <td>${money(price)}</td>
-      <td>${esc(qty)} ${esc(t.unit||"pcs")}</td>
+      <td>${esc(qty)} ${esc(unit)}</td>
       <td><b>${money(finalTotal)}</b></td>
     </tr>`;
   }).join("");
@@ -489,6 +518,15 @@ $("closeMessage").onclick=()=>closeModal("messageModal");
 $("editModal").addEventListener("click",e=>{if(e.target===$("editModal"))closeModal("editModal")});
 $("messageModal").addEventListener("click",e=>{if(e.target===$("messageModal"))closeModal("messageModal")});
 
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    if($("editModal").style.display==="flex") closeModal("editModal");
+    if($("messageModal").style.display==="flex") closeModal("messageModal");
+    if($("itemModal").style.display==="flex") closeItem();
+  }
+});
+
 /* Add item modal */
 function openItem(){
   $("itemModal").style.display="flex";
@@ -514,8 +552,11 @@ $("saveItem").onclick=async()=>{
 
   const itemName=clean($("itemName").value);
   const price=Number($("itemPrice").value)||0;
-  const qty=Math.max(1,Number($("itemQty").value)||1);
   const unit=clean($("itemUnit").value)||"pcs";
+  const rawQty=Number($("itemQty").value);
+  const qty=["kg","gm","ltr","ml","m","cm"].includes(unit)
+    ? Math.max(0.001,Number.isFinite(rawQty)?rawQty:0)
+    : Math.max(1,Number.isFinite(rawQty)?rawQty:1);
 
   if(!itemName){
     toast("Item name required");
