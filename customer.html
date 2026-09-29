@@ -1,281 +1,91 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>KhataPro • Customer</title>
 <style>
-:root{
-  --bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#788398;--line:#e6eaf0;
-  --blue:#315bea;--blue2:#2348cf;--green:#16a36a;--red:#e5484d;
-  --shadow:0 5px 18px rgba(25,42,70,.07)
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-.top{height:48px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center}
-.nav{width:100%;max-width:1000px;margin:auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center}
-.brand{font-size:13px;font-weight:800}
-.back{border:0;background:#eef2ff;color:#3152c9;border-radius:7px;padding:7px 12px;font-size:11px;font-weight:700}
-.wrap{max-width:1000px;margin:18px auto;padding:0 18px 50px}
-.customer-card,.section{background:var(--card);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
-.customer-card{padding:18px 20px;margin-bottom:14px}
-.profile{display:flex;align-items:center;gap:13px}
-.avatar{width:48px;height:48px;border-radius:12px;object-fit:cover;background:#e9eef7;display:block}
-.name{font-size:20px;font-weight:800;margin-bottom:4px}
-.meta{font-size:11px;color:var(--muted)}
-.live{color:var(--green);font-weight:800;margin-top:4px;font-size:11px}
-.section{margin-bottom:14px;overflow:hidden}
-.section-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.section-title{font-size:16px;font-weight:800;margin:0}
-.section-note{font-size:10px;color:var(--muted);margin-top:3px}
-.body{padding:15px}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.field label{display:block;font-size:10px;font-weight:800;color:#69748a;margin:0 0 5px}
-.field input,.field textarea{
-  width:100%;border:1px solid #dce2eb;border-radius:9px;padding:9px 10px;
-  outline:none;background:#fff;font-size:12px;color:var(--text)
-}
-.field input:focus,.field textarea:focus{border-color:#7190ff;box-shadow:0 0 0 3px #315bea12}
-.save{margin-top:11px;background:var(--blue);color:white;border:0;border-radius:8px;padding:9px 14px;font-size:11px;font-weight:800}
-.btn{border:0;border-radius:8px;padding:8px 11px;font-size:11px;font-weight:800}
-.add{background:var(--blue);color:#fff}
-.add:active,.save:active,.send:active{transform:scale(.98)}
-.msgs{padding:10px 14px;background:#fafbfe;min-height:60px;max-height:260px;overflow:auto}
-.msg{max-width:82%;padding:9px 11px;border-radius:11px;font-size:12px;line-height:1.35;margin:5px 0}
-.msg.owner{margin-left:auto;background:#315bea;color:#fff;border-bottom-right-radius:3px}
-.msg.customer{background:#edf1f6;color:#263148;border-bottom-left-radius:3px}
-.msg small{display:block;font-size:9px;opacity:.65;margin-top:4px}
-.empty{padding:13px;color:#8791a4;font-size:11px}
-.message-send{display:flex;gap:7px;padding:10px;border-top:1px solid var(--line)}
-.message-send input{flex:1;border:1px solid #dce2eb;border-radius:8px;padding:9px 10px;font-size:11px;outline:none}
-.send{background:var(--blue);color:white;border:0;border-radius:8px;padding:8px 13px;font-size:11px;font-weight:800}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:620px}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #edf0f4;font-size:11px}
-th{background:#fafbfe;color:#69748a;font-size:9px;text-transform:uppercase}
-td b{font-size:11px}
-.no-data{text-align:center;color:#8a94a5;padding:20px}
-.modal-bg{
-  position:fixed;inset:0;background:rgba(12,20,38,.48);display:none;align-items:center;justify-content:center;
-  padding:15px;z-index:100
-}
-.modal{width:min(470px,100%);background:#fff;border-radius:16px;box-shadow:0 25px 70px rgba(0,0,0,.25);overflow:hidden}
-.modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-.modal-head h3{margin:0;font-size:16px}
-.close{width:30px;height:30px;border:0;border-radius:50%;background:#f0f2f6;font-size:18px}
-.modal-body{padding:16px}
-.modal-actions{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}
-.cancel{background:#eef1f6;color:#4f5b70}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 14px;border-radius:9px;font-size:11px;display:none;z-index:200}
-
-.quick-actions{padding:10px}
-.action-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.action-card{
-  width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;
-  padding:12px;display:flex;align-items:center;gap:10px;text-align:left;color:var(--text)
-}
-.action-card:hover{border-color:#c8d2ef;background:#fbfcff}
-.action-card>b{font-size:12px}.action-card small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
-.action-card strong{margin-left:auto;color:#9aa4b5;font-size:20px;font-weight:500}
-.action-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:17px}
-.edit-icon{background:#eef2ff}.msg-icon{background:#eaf9f2}
-
-select{outline:none}
-.message-preview{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);background:#fbfcff}
-.message-preview .avatar{width:38px;height:38px;border-radius:10px}
-.message-preview b{display:block;font-size:12px}
-.message-preview small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
-.message-modal{width:min(500px,100%)}
-.message-modal-list{min-height:230px;max-height:330px}
-@media(max-width:650px){
- .wrap{padding:0 10px 40px;margin-top:12px}
- .nav{padding:0 12px}
- .customer-card{padding:15px}
- .formgrid{grid-template-columns:1fr 1fr;gap:8px}
- .section-head{padding:12px}
- .body{padding:12px}
- .name{font-size:18px}
-}
-@media(max-width:430px){
- .formgrid{grid-template-columns:1fr}
- .profile{align-items:flex-start}
- .avatar{width:45px;height:45px}
-}
+:root{--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#788398;--line:#e4e9f1;--blue:#315bea;--green:#16a36a;--red:#e5484d;--orange:#ef8d22;--shadow:0 7px 24px rgba(28,45,75,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.top{height:52px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center}.nav{width:100%;max-width:1050px;margin:auto;padding:0 16px;display:flex;justify-content:space-between;align-items:center}.brand{font-size:14px;font-weight:850}.back{background:#eef2ff;color:#3152c9;padding:7px 11px;border-radius:8px;font-size:11px;font-weight:800}
+.wrap{max-width:1050px;margin:16px auto;padding:0 14px 45px}.customer{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:15px;display:flex;align-items:center;gap:12px}.avatar{width:55px;height:55px;border-radius:14px;object-fit:cover;background:#e9eef7}.name{font-size:20px;font-weight:850}.meta{font-size:11px;color:var(--muted);margin-top:3px}.live{font-size:10px;color:var(--green);font-weight:850;margin-top:5px}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0}.action{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;align-items:center;gap:9px;text-align:left;box-shadow:var(--shadow)}.action-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:#eef2ff}.action b{font-size:12px;display:block}.action small{font-size:9px;color:var(--muted);display:block;margin-top:3px}.action strong{margin-left:auto;color:#9aa4b5;font-size:20px;font-weight:500}
+.section{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}.head{padding:13px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.head h2{font-size:14px;margin:0}.head small{color:var(--muted);font-size:9px}.body{padding:14px}
+table{width:100%;border-collapse:collapse;min-width:700px}th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #edf0f4;font-size:10px}th{background:#fafbfe;color:#69748a;font-size:9px;text-transform:uppercase}.table{overflow:auto}.empty{text-align:center;padding:20px;color:#8791a4;font-size:11px}
+.badge{padding:4px 7px;border-radius:99px;font-size:8px;font-weight:800}.credit{background:#eef2ff;color:#3152c9}.payment{background:#eaf9f2;color:#138458}.pending{background:#fff4e5;color:#b96b10}.accepted{background:#eaf9f2;color:#138458}.rejected{background:#fff0f0;color:#c73e44}
+.notice{padding:10px 14px;border-bottom:1px solid var(--line);font-size:11px}.notice b{display:block}.notice small{color:var(--muted);display:block;margin-top:3px}
+.msgs{max-height:310px;overflow:auto;padding:12px;background:#fafbfe}.msg{max-width:84%;padding:9px 11px;border-radius:12px;font-size:11px;line-height:1.4;margin:6px 0}.msg.owner{margin-left:auto;background:#315bea;color:#fff;border-bottom-right-radius:3px}.msg.customer{background:#e8edf4;border-bottom-left-radius:3px}.msg.payment{border:1px solid #f2c477;background:#fff8eb;color:#493617;max-width:90%}.msg small{display:block;font-size:8px;opacity:.65;margin-top:5px}.payment-actions{display:flex;gap:6px;margin-top:8px}.mini{padding:6px 9px;border-radius:7px;font-size:9px;font-weight:800}.accept{background:#16a36a;color:#fff}.reject{background:#fff0f0;color:#c73e44}.send{display:flex;gap:7px;padding:10px;border-top:1px solid var(--line)}.send input{flex:1;border:1px solid #dce2eb;border-radius:8px;padding:9px;font-size:11px;outline:0}.send button{background:var(--blue);color:#fff;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:800}
+.modal-bg{position:fixed;inset:0;background:rgba(12,20,38,.48);display:none;align-items:center;justify-content:center;padding:14px;z-index:100}.modal{width:min(560px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:17px;box-shadow:0 25px 70px rgba(0,0,0,.25)}.modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0;font-size:16px}.close{width:30px;height:30px;border-radius:50%;background:#eef1f5;font-size:18px}.modal-body{padding:16px}.modal-actions{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:7px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:10px;font-weight:800;color:#68748a;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #dce2eb;border-radius:9px;padding:9px 10px;font-size:11px;outline:0;background:#fff}.btn{padding:8px 11px;border-radius:8px;font-size:10px;font-weight:850}.primary{background:var(--blue);color:#fff}.cancel{background:#eef1f6;color:#4f5b70}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#172033;color:#fff;padding:10px 14px;border-radius:9px;font-size:11px;display:none;z-index:200}
+@media(max-width:650px){.actions{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.action:nth-child(3){grid-column:1/-1}.name{font-size:18px}}
+@media(max-width:430px){.actions{grid-template-columns:1fr}.action:nth-child(3){grid-column:auto}}
 </style>
 </head>
 <body>
-
-<header class="top">
-  <div class="nav">
-    <div class="brand">K KhataPro • Customer</div>
-    <button class="back" onclick="history.back()">Customers</button>
-  </div>
-</header>
-
+<header class="top"><div class="nav"><div class="brand">K KhataPro • Customer</div><button class="back" onclick="history.back()">Customers</button></div></header>
 <main class="wrap">
+<div class="customer">
+<img id="avatar" class="avatar" alt=""><div><div id="name" class="name">Loading...</div><div id="meta" class="meta">—</div><div id="live" class="live">● LIVE SYNC</div></div>
+</div>
 
-  <div class="customer-card">
-    <div class="profile">
-      <img id="avatar" class="avatar" alt="Customer">
-      <div>
-        <div id="customerName" class="name">Loading...</div>
-        <div id="customerMeta" class="meta">—</div>
-        <div id="liveStatus" class="live">● LIVE SYNC</div>
-      </div>
-    </div>
-  </div>
+<div class="actions">
+<button id="editOpen" class="action"><span class="action-icon">✏️</span><span><b>Edit Customer</b><small>Details & PIN</small></span><strong>›</strong></button>
+<button id="messageOpen" class="action"><span class="action-icon">💬</span><span><b>Message</b><small>Chat with customer</small></span><strong>›</strong></button>
+<button id="paymentOpen" class="action"><span class="action-icon">💳</span><span><b>Payment</b><small>Record received payment</small></span><strong>›</strong></button>
+</div>
 
-  <!-- QUICK ACTIONS -->
-  <section class="section quick-actions">
-    <div class="action-row">
-      <button id="openEdit" class="action-card">
-        <span class="action-icon edit-icon">✏️</span>
-        <span><b>Edit Customer</b><small>Change customer details</small></span>
-        <strong>›</strong>
-      </button>
-      <button id="openMessage" class="action-card">
-        <span class="action-icon msg-icon">💬</span>
-        <span><b>Message Customer</b><small>Send a message</small></span>
-        <strong>›</strong>
-      </button>
-    </div>
-  </section>
+<section class="section">
+<div class="head"><h2>🧾 Transactions & Payments</h2><small id="summary">Live</small></div>
+<div class="table"><table><thead><tr><th>Date & Time</th><th>Item</th><th>Price</th><th>Qty / Unit</th><th>Total</th><th>Type</th></tr></thead><tbody id="transactions"></tbody></table><div id="empty" class="empty">No transactions yet.</div></div>
+</section>
 
-  <!-- TRANSACTIONS / ITEMS -->
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <h2 class="section-title">🧾 Transactions</h2>
-        <div class="section-note">pcs • kg • gm • ltr • ml • m • cm • box • pack • dozen — portal mein live.</div>
-      </div>
-      <button id="openAddItem" class="btn add">＋ Add Item</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Date & Time</th>
-            <th>Item</th>
-            <th>Original Price</th>
-            <th>Qty / Unit</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody id="transactionBody"></tbody>
-      </table>
-      <div id="transactionEmpty" class="no-data">No transactions. Tap <b>＋ Add Item</b> to add an item.</div>
-    </div>
-  </section>
+<section class="section"><div class="head"><h2>🔔 Notifications</h2><small id="noticeCount">0</small></div><div id="notifications"><div class="empty">No notifications.</div></div></section>
 
+<section class="section"><div class="head"><h2>💬 Recent Messages & Payment Requests</h2><small>Live</small></div><div id="messages" class="msgs"><div class="empty">No messages yet.</div></div><div class="send"><input id="messageInput" placeholder="Message customer..."><button id="sendMessage">Send</button></div></section>
 </main>
 
+<!-- EDIT -->
+<div id="editModal" class="modal-bg"><div class="modal">
+<div class="modal-head"><h3>✏️ Edit Customer</h3><button class="close" data-close="editModal">×</button></div>
+<div class="modal-body"><div class="grid">
+<div class="field"><label>Name</label><input id="fName"></div><div class="field"><label>Mobile</label><input id="fMobile"></div>
+<div class="field"><label>Address</label><input id="fAddress"></div><div class="field"><label>Photo URL</label><input id="fPhoto"></div>
+<div class="field"><label>6-Digit PIN</label><input id="fPin" maxlength="6" inputmode="numeric"></div><div class="field"><label>Email</label><input id="fEmail" type="email"></div>
+</div></div><div class="modal-actions"><button class="btn cancel" data-close="editModal">Cancel</button><button id="saveCustomer" class="btn primary">Save Changes</button></div>
+</div></div>
 
-<!-- EDIT CUSTOMER MODAL -->
-<div id="editModal" class="modal-bg">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <h3>✏️ Edit Customer</h3>
-        <div class="section-note">Changes will sync to the customer portal.</div>
-      </div>
-      <button class="close" id="closeEdit">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="formgrid">
-        <div class="field"><label>Name</label><input id="nameInput"></div>
-        <div class="field"><label>Mobile</label><input id="mobileInput" inputmode="tel"></div>
-        <div class="field"><label>Address</label><input id="addressInput"></div>
-        <div class="field"><label>Photo URL</label><input id="photoInput"></div>
-        <div class="field"><label>6-digit Digital PIN</label><input id="pinInput" maxlength="6" inputmode="numeric" placeholder="6 digits"></div>
-        <div class="field"><label>Email</label><input id="emailInput" type="email"></div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn cancel" id="cancelEdit">Cancel</button>
-      <button id="saveCustomer" class="btn add">Save Changes</button>
-    </div>
-  </div>
-</div>
+<!-- ITEM -->
+<div id="itemModal" class="modal-bg"><div class="modal">
+<div class="modal-head"><h3>＋ Add Customer Item</h3><button class="close" data-close="itemModal">×</button></div>
+<div class="modal-body"><div class="grid">
+<div class="field"><label>Item Name</label><input id="iName" placeholder="Example: Shirt"></div><div class="field"><label>Price / MRP</label><input id="iPrice" type="number" min="0" step="0.01"></div>
+<div class="field"><label>Quantity</label><input id="iQty" type="number" min="0.001" step="0.001" value="1"></div>
+<div class="field"><label>Unit</label><select id="iUnit"><option value="pcs">Pieces (pcs)</option><option value="kg">Kilogram (kg)</option><option value="gm">Gram (gm)</option><option value="ltr">Litre (ltr)</option><option value="ml">Millilitre (ml)</option><option value="m">Metre (m)</option><option value="cm">Centimetre (cm)</option><option value="box">Box</option><option value="pack">Pack</option><option value="dozen">Dozen</option></select></div>
+</div><div style="margin-top:12px;background:#f6f8fc;padding:10px;border-radius:9px;font-size:11px">Total: <b id="iTotal">₹0.00</b></div></div>
+<div class="modal-actions"><button class="btn cancel" data-close="itemModal">Cancel</button><button id="saveItem" class="btn primary">Add Item</button></div>
+</div></div>
 
-<!-- MESSAGE MODAL -->
-<div id="messageModal" class="modal-bg">
-  <div class="modal message-modal">
-    <div class="modal-head">
-      <div>
-        <h3>💬 Message Customer</h3>
-        <div id="messageCustomerName" class="section-note">Send a message directly to this customer.</div>
-      </div>
-      <button class="close" id="closeMessage">×</button>
-    </div>
-    <div class="message-preview">
-      <img id="messageAvatar" class="avatar" alt="">
-      <div><b id="messageCustomerName2">Customer</b><small id="messageCustomerMobile">—</small></div>
-    </div>
-    <div id="messages" class="msgs message-modal-list"><div class="empty">No messages yet.</div></div>
-    <div class="message-send">
-      <input id="messageInput" placeholder="Write message...">
-      <button id="sendMessage" class="send">Send</button>
-    </div>
-  </div>
-</div>
+<!-- PAYMENT -->
+<div id="paymentModal" class="modal-bg"><div class="modal">
+<div class="modal-head"><div><h3>💳 Record Payment</h3><div style="font-size:9px;color:#788398;margin-top:3px">Owner received payment from customer</div></div><button class="close" data-close="paymentModal">×</button></div>
+<div class="modal-body"><div class="grid">
+<div class="field"><label>Paid Amount</label><input id="pAmount" type="number" min="0.01" step="0.01" placeholder="0"></div>
+<div class="field"><label>Payment Method</label><select id="pMethod"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank</option><option>Other</option></select></div>
+</div></div>
+<div class="modal-actions"><button class="btn cancel" data-close="paymentModal">Cancel</button><button id="savePayment" class="btn primary">Save Payment</button></div>
+</div></div>
 
-<!-- ADD ITEM MODAL -->
-<div id="itemModal" class="modal-bg">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>＋ Add Customer Item</h3>
-      <button class="close" id="closeItem">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="formgrid">
-        <div class="field">
-          <label>Item Name</label>
-          <input id="itemName" placeholder="Example: Shirt">
-        </div>
-        <div class="field">
-          <label>Original Price / MRP</label>
-          <input id="itemPrice" type="number" min="0" step="0.01" placeholder="0">
-        </div>
-        <div class="field">
-          <label>Quantity</label>
-          <input id="itemQty" type="number" min="0.001" step="0.001" value="1">
-        </div>
-        <div class="field">
-          <label>Unit</label>
-          <select id="itemUnit" style="width:100%;border:1px solid #dce2eb;border-radius:9px;padding:9px 10px;font-size:12px;background:#fff">
-            <option value="pcs">Pieces (pcs)</option>
-            <option value="kg">Kilogram (kg)</option>
-            <option value="gm">Gram (gm)</option>
-            <option value="ltr">Litre (ltr)</option>
-            <option value="ml">Millilitre (ml)</option>
-            <option value="m">Metre (m)</option>
-            <option value="cm">Centimetre (cm)</option>
-            <option value="box">Box</option>
-            <option value="pack">Pack</option>
-            <option value="dozen">Dozen</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-top:12px;background:#f6f8fc;border-radius:10px;padding:11px;font-size:12px">
-        Total: <b id="itemTotal">₹0.00</b>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn cancel" id="cancelItem">Cancel</button>
-      <button class="btn add" id="saveItem">Add Item</button>
-    </div>
-  </div>
-</div>
+<!-- MESSAGE -->
+<div id="messageModal" class="modal-bg"><div class="modal">
+<div class="modal-head"><h3>💬 Message Customer</h3><button class="close" data-close="messageModal">×</button></div>
+<div id="messagesModal" class="msgs" style="min-height:220px;max-height:330px"><div class="empty">No messages yet.</div></div>
+<div class="send"><input id="messageModalInput" placeholder="Write message..."><button id="sendModalMessage">Send</button></div>
+</div></div>
 
 <div id="toast" class="toast"></div>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import {getDatabase,ref,onValue,update,set,push,get} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
+import {getDatabase,ref,onValue,update,set,push} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 const firebaseConfig={
   apiKey:"AIzaSyCrkGEIgNlAsmOtWtrlCkelYrqDd7j-SoA",
   authDomain:"public-project-4d672.firebaseapp.com",
@@ -286,362 +96,128 @@ const firebaseConfig={
   appId:"1:265276656656:web:c2bc539cab446e51b88e95",
   measurementId:"G-13XVC26YTQ"
 };
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getDatabase(app);
-
-const customerId=new URLSearchParams(location.search).get("id");
-let uid="";
-let customer={};
-let transactions=[];
-let messages={};
-
-const $=id=>document.getElementById(id);
-const clean=v=>String(v??"").trim();
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getDatabase(app);
+const $=id=>document.getElementById(id), clean=v=>String(v??"").trim();
 const money=n=>new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:2}).format(Number(n)||0);
+let uid="",cid=new URLSearchParams(location.search).get("id"),customer={},transactions=[],messages={};
 
-function toast(text){
-  $("toast").textContent=text;
-  $("toast").style.display="block";
-  setTimeout(()=>$("toast").style.display="none",2200);
-}
-function esc(s){
-  return clean(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-}
-function fallbackAvatar(name){
-  const letter=clean(name||"C").charAt(0).toUpperCase();
-  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-      <rect width="100" height="100" rx="16" fill="#e9eef7"/>
-      <text x="50" y="62" text-anchor="middle" font-size="42" font-family="Arial" fill="#315bea">${letter}</text>
-    </svg>`
-  );
-}
-function normalizeTransactions(value){
-  if(Array.isArray(value)) return value.filter(Boolean);
-  if(value && typeof value==="object") return Object.values(value);
-  return [];
-}
-function renderCustomer(){
-  const c=customer||{};
-  $("customerName").textContent=c.name||"Customer";
-  $("customerMeta").textContent=(c.mobile||"No mobile")+"  •  📍 "+(c.address||"No address");
-  $("avatar").src=c.photo||fallbackAvatar(c.name);
-  $("avatar").onerror=()=>{$("avatar").src=fallbackAvatar(c.name)};
+function toast(t){$("toast").textContent=t;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2200)}
+function esc(s){return clean(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function fallback(n){return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100%" height="100%" fill="#e9eef7"/><text x="50%" y="62%" text-anchor="middle" font-size="42" fill="#315bea">${esc((n||"C")[0].toUpperCase())}</text></svg>`)}
+function modal(id,open=true){$(id).style.display=open?"flex":"none"}
+function normalize(v){return Array.isArray(v)?v.filter(Boolean):Object.values(v||{})}
 
-  $("nameInput").value=c.name||"";
-  $("mobileInput").value=c.mobile||"";
-  $("addressInput").value=c.address||"";
-  $("photoInput").value=c.photo||"";
-  $("pinInput").value=c.customerPin||"";
-  $("emailInput").value=c.email||"";
-  if($("messageCustomerName")) $("messageCustomerName").textContent="Message "+(c.name||"Customer");
-  if($("messageCustomerName2")) $("messageCustomerName2").textContent=c.name||"Customer";
-  if($("messageCustomerMobile")) $("messageCustomerMobile").textContent=c.mobile||"";
-  if($("messageAvatar")) {
-    $("messageAvatar").src=c.photo||fallbackAvatar(c.name);
-    $("messageAvatar").onerror=()=>{$("messageAvatar").src=fallbackAvatar(c.name)};
+function render(){
+ const c=customer||{};
+ $("name").textContent=c.name||"Customer"; $("meta").textContent=(c.mobile||"")+" • "+(c.address||"");
+ $("avatar").src=c.photo||fallback(c.name); $("avatar").onerror=()=>{$("avatar").src=fallback(c.name)};
+ $("fName").value=c.name||"";$("fMobile").value=c.mobile||"";$("fAddress").value=c.address||"";$("fPhoto").value=c.photo||"";$("fPin").value=c.customerPin||"";$("fEmail").value=c.email||"";
+ const tx=transactions;
+ let credit=0,paid=0;
+ $("transactions").innerHTML=tx.length?tx.map(t=>{
+  const type=clean(t.type||"Credit"), p=Number(t.price??t.mrp??t.originalPrice)||0,q=Number(t.qty??t.quantity)||1;
+  const total=Number(t.total)>0?Number(t.total):p*q;
+  if(type.toLowerCase()==="payment")paid+=Math.abs(total);else credit+=Math.abs(total);
+  return `<tr><td>${esc(t.date||"—")}</td><td><b>${esc(t.item||t.itemName||t.name||"Payment")}</b></td><td>${money(p)}</td><td>${esc(q)} ${esc(t.unit||"pcs")}</td><td><b>${money(total)}</b></td><td><span class="badge ${type.toLowerCase()==="payment"?"payment":"credit"}">${esc(type)}</span></td></tr>`;
+ }).join(""):"";
+ $("empty").style.display=tx.length?"none":"block";
+ $("summary").textContent=`Credit ${money(credit)} • Paid ${money(paid)} • Balance ${money(Math.max(0,credit-paid))}`;
+ renderNotifications(c.notifications||{});
+ renderMessages(messages);
+}
+function renderNotifications(obj){
+ const a=Object.values(obj||{}).sort((x,y)=>(Number(y.time||y.createdAt)||0)-(Number(x.time||x.createdAt)||0));
+ $("noticeCount").textContent=a.length;
+ $("notifications").innerHTML=a.length?a.map(n=>`<div class="notice"><b>${esc(n.title||n.type||"Notification")}</b><small>${esc(n.message||n.text||"")}</small></div>`).join(""):'<div class="empty">No notifications.</div>';
+}
+function messageHTML(obj){
+ const a=Object.entries(obj||{}).map(([id,m])=>({id,...m})).sort((x,y)=>(Number(x.time||x.createdAt)||0)-(Number(y.time||y.createdAt)||0));
+ return a.length?a.map(m=>{
+  const isPay=m.type==="payment_request";
+  const status=m.status||"pending";
+  return `<div class="msg ${isPay?"payment":(m.sender==="customer"?"customer":"owner")}">
+   ${isPay?`<b>💳 Payment Request: ${money(m.amount)}</b><br><span>${esc(m.method||"Payment")}${m.note?" • "+esc(m.note):""}</span><br><span class="badge ${status}">${status.toUpperCase()}</span>
+   ${status==="pending"?`<div class="payment-actions"><button class="mini accept" data-pay="${m.id}">Accept Payment</button><button class="mini reject" data-reject="${m.id}">Reject</button></div>`:""}`:esc(m.text||m.message||"")}
+   <small>${m.sender==="customer"?"Customer":"You"}${m.time?" • "+new Date(m.time).toLocaleString("en-IN"):""}</small>
+  </div>`;
+ }).join(""):'<div class="empty">No messages yet.</div>';
+}
+function renderMessages(obj){
+ $("messages").innerHTML=messageHTML(obj);$("messagesModal").innerHTML=messageHTML(obj);
+ [$("messages"),$("messagesModal")].forEach(x=>x.scrollTop=x.scrollHeight);
+ bindPaymentButtons();
+}
+function bindPaymentButtons(){
+ document.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>acceptPayment(b.dataset.pay));
+ document.querySelectorAll("[data-reject]").forEach(b=>b.onclick=()=>rejectPayment(b.dataset.reject));
+}
+async function accessKey(m,p){const bytes=new TextEncoder().encode(clean(m)+"|"+clean(p));let b="";bytes.forEach(x=>b+=String.fromCharCode(x));return btoa(b).replace(/[^a-zA-Z0-9]/g,"").slice(0,50)}
+function mkey(m){return btoa(clean(m)).replace(/[^a-zA-Z0-9]/g,"").slice(0,50)}
+async function syncPortal(c,tx=transactions,msg=messages,notifications=c.notifications||{}){
+ if(!clean(c.mobile)||!/^\\d{6}$/.test(clean(c.customerPin)))return;
+ const key=await accessKey(c.mobile,c.customerPin);
+ await update(ref(db,`customerAccess/${key}/shops/${uid}`),{customerId:cid,shopName:c.shopName||"",shopPhoto:c.shopPhoto||"",account:{...c,customerAccessKey:key,transactions:tx},notifications,messages:msg});
+ await set(ref(db,`customerIndex/${mkey(c.mobile)}/${uid}`),{shopName:c.shopName||"",shopPhoto:c.shopPhoto||"",customerId:cid,accessKey:key});
+}
+onAuthStateChanged(auth,u=>{
+ if(!u){$("live").textContent="● LOGIN REQUIRED";return}
+ uid=u.uid;if(!cid){$("name").textContent="Customer ID missing";return}
+ onValue(ref(db,`shops/${uid}/customers/${cid}`),s=>{
+  if(!s.exists()){toast("Customer not found");return}
+  customer=s.val()||{};transactions=normalize(customer.transactions);messages=customer.messages||{};render();
+ });
+ onValue(ref(db,`customerAccess`),snap=>{
+  const all=snap.val()||{};
+  for(const [key,node] of Object.entries(all)){
+   const shop=node?.shops?.[uid];
+   if(shop?.customerId===cid){messages=shop.messages||{};renderMessages(messages);break}
   }
-}
-function renderTransactions(){
-  const body=$("transactionBody");
-  if(!transactions.length){
-    body.innerHTML="";
-    $("transactionEmpty").style.display="block";
-    return;
-  }
-  $("transactionEmpty").style.display="none";
-  body.innerHTML=transactions.map(t=>{
-    const price=Number(t.price??t.mrp??t.originalPrice)||0;
-    const qty=Number(t.qty??t.quantity)||1;
-    const unit=clean(t.unit||"pcs");
-    const total=Number(t.total);
-    const finalTotal=Number.isFinite(total)&&total>0?total:price*qty;
-    return `<tr>
-      <td>${esc(t.date||t.dateTime||"—")}</td>
-      <td><b>${esc(t.item||t.itemName||t.name||"Item")}</b></td>
-      <td>${money(price)}</td>
-      <td>${esc(qty)} ${esc(unit)}</td>
-      <td><b>${money(finalTotal)}</b></td>
-    </tr>`;
-  }).join("");
-}
-function renderMessages(){
-  const box=$("messages");
-  const arr=Object.entries(messages||{})
-    .map(([id,m])=>({id,...m}))
-    .sort((a,b)=>(Number(a.time||a.createdAt)||0)-(Number(b.time||b.createdAt)||0));
-
-  if(!arr.length){
-    box.innerHTML='<div class="empty">No messages yet.</div>';
-    return;
-  }
-  box.innerHTML=arr.map(m=>{
-    const sender=m.sender==="customer"?"customer":"owner";
-    const who=sender==="customer"?"Customer":"You";
-    const tm=m.time?new Date(m.time).toLocaleString("en-IN"):"";
-    return `<div class="msg ${sender}">
-      ${esc(m.text||m.message||"")}
-      <small>${who}${tm?" • "+tm:""}</small>
-    </div>`;
-  }).join("");
-  box.scrollTop=box.scrollHeight;
-}
-
-async function makeAccessKey(mobile,pin){
-  const data=mobile+"|"+pin;
-  const bytes=new TextEncoder().encode(data);
-  let binary="";
-  bytes.forEach(b=>binary+=String.fromCharCode(b));
-  return btoa(binary).replace(/[^a-zA-Z0-9]/g,"").slice(0,50);
-}
-function mobileKey(mobile){
-  return btoa(clean(mobile)).replace(/[^a-zA-Z0-9]/g,"").slice(0,50);
-}
-
-/* Keep customer portal mirror updated after every owner change. */
-async function syncCustomerPortal(c,txs,msgs){
-  const mobile=clean(c.mobile);
-  const pin=clean(c.customerPin);
-  if(!mobile || !/^\d{6}$/.test(pin)) return;
-
-  const accessKey=await makeAccessKey(mobile,pin);
-  const shopData={
-    customerId:customerId,
-    shopName:c.shopName||"",
-    shopPhoto:c.shopPhoto||"",
-    account:{
-      ...c,
-      customerAccessKey:accessKey,
-      transactions:txs
-    },
-    notifications:c.notifications||{},
-    messages:msgs||{}
-  };
-
-  await update(ref(db,`customerAccess/${accessKey}/shops/${uid}`),shopData);
-  await set(ref(db,`customerIndex/${mobileKey(mobile)}/${uid}`),{
-    shopName:c.shopName||"",
-    customerId:customerId,
-    accessKey:accessKey
-  });
-}
-
-onAuthStateChanged(auth,user=>{
-  if(!user){
-    $("liveStatus").textContent="● LOGIN REQUIRED";
-    return;
-  }
-  uid=user.uid;
-
-  if(!customerId){
-    $("customerName").textContent="Customer ID missing";
-    $("liveStatus").textContent="● CUSTOMER ID REQUIRED";
-    return;
-  }
-
-  const customerRef=ref(db,`shops/${uid}/customers/${customerId}`);
-
-  onValue(customerRef,snap=>{
-    if(!snap.exists()){
-      $("customerName").textContent="Customer not found";
-      $("liveStatus").textContent="● NOT FOUND";
-      return;
-    }
-    customer=snap.val()||{};
-    transactions=normalizeTransactions(customer.transactions);
-    messages=customer.messages||{};
-    renderCustomer();
-    renderTransactions();
-    renderMessages();
-    $("liveStatus").textContent="● LIVE SYNC";
-  });
-
-  onValue(ref(db,`shops/${uid}/customers/${customerId}/messages`),snap=>{
-    messages=snap.val()||{};
-    renderMessages();
-  });
+ });
 });
 
-/* Edit customer */
 $("saveCustomer").onclick=async()=>{
-  if(!uid||!customerId)return;
-
-  const patch={
-    name:clean($("nameInput").value),
-    mobile:clean($("mobileInput").value),
-    address:clean($("addressInput").value),
-    photo:clean($("photoInput").value),
-    customerPin:clean($("pinInput").value),
-    email:clean($("emailInput").value),
-    updatedAt:Date.now()
-  };
-
-  if(!patch.name||!patch.mobile){
-    toast("Name and mobile are required");
-    return;
-  }
-  if(!/^\d{6}$/.test(patch.customerPin)){
-    toast("Digital PIN must be exactly 6 digits");
-    return;
-  }
-
-  try{
-    await update(ref(db,`shops/${uid}/customers/${customerId}`),patch);
-    customer={...customer,...patch};
-    await syncCustomerPortal(customer,transactions,messages);
-    toast("Customer details updated");
-  }catch(err){
-    console.error(err);
-    toast("Save failed: "+err.message);
-  }
+ const p={name:clean($("fName").value),mobile:clean($("fMobile").value),address:clean($("fAddress").value),photo:clean($("fPhoto").value),customerPin:clean($("fPin").value),email:clean($("fEmail").value),updatedAt:Date.now()};
+ if(!p.name||!p.mobile){toast("Name and mobile required");return}if(!/^\d{6}$/.test(p.customerPin)){toast("PIN must be 6 digits");return}
+ try{await update(ref(db,`shops/${uid}/customers/${cid}`),p);customer={...customer,...p};await syncPortal(customer);modal("editModal",false);toast("Details updated & portal synced")}catch(e){toast(e.message)}
 };
-
-
-/* Compact Edit + Message modals */
-function openModal(id){$(id).style.display="flex"}
-function closeModal(id){$(id).style.display="none"}
-
-$("openEdit").onclick=()=>openModal("editModal");
-$("closeEdit").onclick=()=>closeModal("editModal");
-$("cancelEdit").onclick=()=>closeModal("editModal");
-
-$("openMessage").onclick=()=>{
-  openModal("messageModal");
-  setTimeout(()=>$("messageInput").focus(),80);
-  renderMessages();
-};
-$("closeMessage").onclick=()=>closeModal("messageModal");
-
-
-$("editModal").addEventListener("click",e=>{if(e.target===$("editModal"))closeModal("editModal")});
-$("messageModal").addEventListener("click",e=>{if(e.target===$("messageModal"))closeModal("messageModal")});
-
-
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){
-    if($("editModal").style.display==="flex") closeModal("editModal");
-    if($("messageModal").style.display==="flex") closeModal("messageModal");
-    if($("itemModal").style.display==="flex") closeItem();
-  }
-});
-
-/* Add item modal */
-function openItem(){
-  $("itemModal").style.display="flex";
-  $("itemName").focus();
-}
-function closeItem(){
-  $("itemModal").style.display="none";
-}
-$("openAddItem").onclick=openItem;
-$("closeItem").onclick=closeItem;
-$("cancelItem").onclick=closeItem;
-
-function updateItemTotal(){
-  const price=Number($("itemPrice").value)||0;
-  const qty=Math.max(1,Number($("itemQty").value)||1);
-  $("itemTotal").textContent=money(price*qty);
-}
-$("itemPrice").oninput=updateItemTotal;
-$("itemQty").oninput=updateItemTotal;
-
 $("saveItem").onclick=async()=>{
-  if(!uid||!customerId)return;
-
-  const itemName=clean($("itemName").value);
-  const price=Number($("itemPrice").value)||0;
-  const unit=clean($("itemUnit").value)||"pcs";
-  const rawQty=Number($("itemQty").value);
-  const qty=["kg","gm","ltr","ml","m","cm"].includes(unit)
-    ? Math.max(0.001,Number.isFinite(rawQty)?rawQty:0)
-    : Math.max(1,Number.isFinite(rawQty)?rawQty:1);
-
-  if(!itemName){
-    toast("Item name required");
-    return;
-  }
-  if(price<=0){
-    toast("Enter original price / MRP");
-    return;
-  }
-
-  const now=Date.now();
-  const transaction={
-    item:itemName,
-    itemName:itemName,
-    price:price,
-    originalPrice:price,
-    mrp:price,
-    qty:qty,
-    quantity:qty,
-    unit:unit,
-    total:price*qty,
-    type:"Credit",
-    date:new Date(now).toLocaleString("en-IN"),
-    createdAt:now
-  };
-
-  const newTransactions=[...transactions,transaction];
-
-  try{
-    await update(ref(db,`shops/${uid}/customers/${customerId}`),{
-      transactions:newTransactions,
-      updatedAt:now
-    });
-
-    transactions=newTransactions;
-    customer={...customer,transactions:newTransactions};
-
-    await syncCustomerPortal(customer,newTransactions,messages);
-
-    $("itemName").value="";
-    $("itemPrice").value="";
-    $("itemQty").value="1";
-    $("itemUnit").value="pcs";
-    updateItemTotal();
-    closeItem();
-    toast("Item added • Customer Portal updated");
-  }catch(err){
-    console.error(err);
-    toast("Item save failed: "+err.message);
-  }
+ const name=clean($("iName").value),price=Number($("iPrice").value)||0,unit=clean($("iUnit").value)||"pcs",raw=Number($("iQty").value);
+ const qty=["kg","gm","ltr","ml","m","cm"].includes(unit)?Math.max(.001,Number.isFinite(raw)?raw:0):Math.max(1,Number.isFinite(raw)?raw:1);
+ if(!name||price<=0){toast("Item name and price required");return}
+ const now=Date.now(),t={item:name,itemName:name,price,mrp:price,originalPrice:price,qty,quantity:qty,unit,total:price*qty,type:"Credit",date:new Date(now).toLocaleString("en-IN"),createdAt:now};
+ const tx=[...transactions,t],notes={...(customer.notifications||{})};notes["n"+now]={title:"New Item Added",message:`${name} • ${qty} ${unit} • ${money(price*qty)}`,type:"item",time:now};
+ try{await update(ref(db,`shops/${uid}/customers/${cid}`),{transactions:tx,notifications:notes,updatedAt:now});transactions=tx;customer={...customer,transactions:tx,notifications:notes};await syncPortal(customer,tx,messages,notes);modal("itemModal",false);toast("Item added & customer notified");$("iName").value="";$("iPrice").value=""}catch(e){toast(e.message)}
 };
-
-/* Messages */
-async function sendMessage(){
-  const text=clean($("messageInput").value);
-  if(!text||!uid||!customerId)return;
-
-  try{
-    const messagesRef=ref(db,`shops/${uid}/customers/${customerId}/messages`);
-    const id=push(messagesRef).key;
-    const msg={text:text,sender:"owner",time:Date.now()};
-    await set(ref(db,`shops/${uid}/customers/${customerId}/messages/${id}`),msg);
-
-    messages={...messages,[id]:msg};
-    await syncCustomerPortal(customer,transactions,messages);
-
-    $("messageInput").value="";
-    renderMessages();
-    toast("Message sent");
-  }catch(err){
-    console.error(err);
-    toast("Message failed: "+err.message);
-  }
+$("savePayment").onclick=async()=>{
+ const amount=Number($("pAmount").value)||0,method=clean($("pMethod").value);if(amount<=0){toast("Enter paid amount");return}
+ const now=Date.now(),t={item:"Payment Received",itemName:"Payment Received",price:amount,originalPrice:amount,qty:1,unit:"payment",total:amount,type:"Payment",method,date:new Date(now).toLocaleString("en-IN"),createdAt:now};
+ const tx=[...transactions,t],notes={...(customer.notifications||{})};notes["n"+now]={title:"Payment Received",message:`${money(amount)} via ${method}`,type:"payment",time:now};
+ try{await update(ref(db,`shops/${uid}/customers/${cid}`),{transactions:tx,notifications:notes,updatedAt:now});transactions=tx;customer={...customer,transactions:tx,notifications:notes};await syncPortal(customer,tx,messages,notes);modal("paymentModal",false);toast("Payment saved & portal updated");$("pAmount").value=""}catch(e){toast(e.message)}
+};
+async function sendOwnerMessage(){
+ const input=$("messageModal").style.display==="flex"?$("messageModalInput"):$("messageInput"),text=clean(input.value);if(!text)return;
+ const id=push(ref(db,`shops/${uid}/customers/${cid}/messages`)).key,msg={text,sender:"owner",time:Date.now()};
+ try{await set(ref(db,`shops/${uid}/customers/${cid}/messages/${id}`),msg);messages={...messages,[id]:msg};await syncPortal(customer,transactions,messages,customer.notifications||{});input.value="";renderMessages(messages);toast("Message sent")}catch(e){toast(e.message)}
 }
-$("sendMessage").onclick=sendMessage;
-$("messageInput").addEventListener("keydown",e=>{
-  if(e.key==="Enter"){
-    e.preventDefault();
-    sendMessage();
-  }
-});
+$("sendMessage").onclick=sendOwnerMessage;$("sendModalMessage").onclick=sendOwnerMessage;
+$("messageInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();sendOwnerMessage()}};$("messageModalInput").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();sendOwnerMessage()}};
 
-$("itemModal").addEventListener("click",e=>{
-  if(e.target===$("itemModal"))closeItem();
-});
+async function acceptPayment(id){
+ const m=messages[id];if(!m||m.status!=="pending")return;
+ const now=Date.now(),t={item:"Payment Received",itemName:"Payment Received",price:Number(m.amount)||0,originalPrice:Number(m.amount)||0,qty:1,unit:"payment",total:Number(m.amount)||0,type:"Payment",method:m.method||"Online",date:new Date(now).toLocaleString("en-IN"),createdAt:now};
+ const tx=[...transactions,t],notes={...(customer.notifications||{})};notes["n"+now]={title:"Payment Accepted",message:`${money(m.amount)} payment accepted`,type:"payment",time:now};
+ const updatedMsg={...m,status:"accepted",acceptedAt:now};
+ const newMessages={...messages,[id]:updatedMsg};
+ try{await update(ref(db,`shops/${uid}/customers/${cid}`),{transactions:tx,notifications:notes,messages:newMessages,updatedAt:now});transactions=tx;messages=newMessages;customer={...customer,transactions:tx,notifications:notes,messages:newMessages};await syncPortal(customer,tx,newMessages,notes);toast("Payment accepted & balance updated")}catch(e){toast(e.message)}
+}
+async function rejectPayment(id){
+ const m=messages[id];if(!m)return;const updated={...m,status:"rejected",rejectedAt:Date.now()},newMessages={...messages,[id]:updated};
+ try{await update(ref(db,`shops/${uid}/customers/${cid}/messages`),newMessages);messages=newMessages;await syncPortal(customer,transactions,messages,customer.notifications||{});toast("Payment request rejected")}catch(e){toast(e.message)}
+}
+$("editOpen").onclick=()=>modal("editModal");$("messageOpen").onclick=()=>{modal("messageModal");renderMessages(messages)};$("paymentOpen").onclick=()=>modal("paymentModal");
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>modal(b.dataset.close,false));
+document.querySelectorAll(".modal-bg").forEach(x=>x.onclick=e=>{if(e.target===x)modal(x.id,false)});
+$("iPrice").oninput=()=>{$("iTotal").textContent=money((Number($("iPrice").value)||0)*(Number($("iQty").value)||1))};
+$("iQty").oninput=()=>{$("iTotal").textContent=money((Number($("iPrice").value)||0)*(Number($("iQty").value)||1))};
 </script>
-</body>
-</html>
+</body></html>
