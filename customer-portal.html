@@ -1,90 +1,670 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Portal • KhataPro</title><link rel="stylesheet" href="css/style.css"></head><body class="customer-bg"><header class="customer-nav"><a href="https://www.appcreator24.com/app4199946-rjgbs2" class="click the download app 📱">click the download app 📱 </a><select id="languageSelect" class="lang"><option value="en">English</option><option value="ne">नेपाली</option></select></header><main class="wrap narrow"><section class="customer-hero"><div class="portal-icon">🔐</div><span class="portal-badge" data-i18n="secure">Private & secure access</span><h1 data-i18n="customerPortalTitle">Secure Customer Portal</h1><p class="hint">Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.</p><form id="mobileForm" class="portal-form"><label><span data-i18n="mobile">Mobile number</span><input id="mobile" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX"></label><button class="primary" type="submit">Continue</button></form></section><section id="results" class="portal-result"></section><section id="view" class="hidden portal-result"></section></main><script type="module">
-import {db,cleanMobile} from './js/firebase-config.js';
-import {ref,get,onValue,update} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js';
-import {initLanguage,t,money,esc} from './js/common.js';
-initLanguage();
-const hashText=async text=>{const data=new TextEncoder().encode(text),h=await crypto.subtle.digest('SHA-256',data);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')};
-const form=document.querySelector('#mobileForm'),results=document.querySelector('#results'),view=document.querySelector('#view');
-let currentMobile='',indexData={};
-form.onsubmit=async e=>{e.preventDefault();currentMobile=cleanMobile(document.querySelector('#mobile').value);if(currentMobile.length<7){results.innerHTML='<div class="result-error"><b>Account not found</b><br>Check your mobile number.</div>';return}results.innerHTML='<div class="panel">Checking...</div>';try{const h=await hashText(currentMobile),data=(await get(ref(db,`customerIndex/${h}`))).val()||{};const shops=Object.entries(data).filter(([,x])=>x&&x.enabled!==false);if(!shops.length){results.innerHTML='<div class="result-error"><b>Account not found</b><br>No shop is registered with this mobile number.</div>';return}indexData=Object.fromEntries(shops);results.innerHTML=`<div class="panel"><h2>Select Shop</h2><div class="customer-grid">${shops.map(([uid,x])=>`<button class="customer-card" data-shop="${uid}"><div class="avatar shop-photo-avatar">${x.shopPhoto?`<img src="${esc(x.shopPhoto)}" alt="">`:'🏪'}</div><div><h3>${esc(x.shopName||'Shop')}</h3><small>Enter PIN for this shop</small></div><strong>›</strong></button>`).join('')}</div></div>`;document.querySelectorAll('[data-shop]').forEach(b=>b.onclick=()=>askPin(b.dataset.shop));}catch(err){results.innerHTML=`<div class="result-error">${esc(err.message)}</div>`}};
-function askPin(uid){results.innerHTML=`<div class="panel"><h2>Enter Digital PIN</h2><p>${esc(indexData[uid]?.shopName||'Shop')}</p><form id="pinForm" class="portal-form"><label><span>6-digit PIN</span><input id="pin" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required autofocus></label><button class="primary">Open Account</button><button type="button" class="secondary" id="backShops">Back</button></form></div>`;document.querySelector('#backShops').onclick=()=>form.dispatchEvent(new Event('submit',{cancelable:true}));document.querySelector('#pinForm').onsubmit=async e=>{e.preventDefault();const pin=document.querySelector('#pin').value.trim();if(!/^[0-9]{6}$/.test(pin)){return}try{const key=await hashText(currentMobile+'|'+pin),data=(await get(ref(db,`customerAccess/${key}`))).val();const shop=data?.shops?.[uid];if(!shop||cleanMobile(shop.account?.mobile)!==currentMobile){results.innerHTML='<div class="result-error"><b>Account not found</b><br>Wrong PIN.</div>';return}showAccount(uid,shop,key)}catch(err){results.innerHTML=`<div class="result-error">${esc(err.message)}</div>`}}}
-function formatDateTime(ts,date){const d=ts?new Date(ts):new Date((date||'')+'T00:00:00');return d.toLocaleString(localStorage.getItem('khata_lang')==='ne'?'ne-NP':'en-IN',{dateStyle:'short',timeStyle:'short',hour12:true})}
-function showAccount(uid,shop,key){
- results.classList.add('hidden');
- view.classList.remove('hidden');
- const liveRef=ref(db,`customerAccess/${key}/shops/${uid}`);
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Customer Portal • KhataPro</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#07111d;color:#eef7ff}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:920px;margin:auto;padding:14px}
+.customer-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0}
+.customer-nav a,.lang{padding:10px 13px;border:1px solid #284961;border-radius:12px;background:#0c1c2a;color:#fff}
+.lang{width:auto}
+.panel{background:#0d1d2b;border:1px solid #24465e;border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 15px 45px #0005}
+.customer-hero{text-align:center;padding:25px 18px}
+.portal-icon{font-size:42px}.portal-badge{display:inline-block;margin:8px 0;padding:6px 10px;border-radius:999px;background:#0b9365;font-size:12px;font-weight:800}
+h1,h2,h3{margin:0 0 9px}.hint,.muted{color:#9bb1c4}
+.portal-form{display:grid;gap:10px;max-width:520px;margin:18px auto 0;text-align:left}
+label span{display:block;margin-bottom:6px;font-weight:700}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid #31536b;background:#071521;color:#fff;font-size:16px;outline:none}
+button{width:100%;padding:13px;border:0;border-radius:12px;background:#1498ed;color:#fff;font-size:16px;font-weight:800;cursor:pointer}
+button.secondary{background:#172d40}
+.result-error{padding:14px;border-radius:13px;background:#341b21;border:1px solid #71343e;color:#ffd9de}
+.customer-grid{display:grid;gap:10px}
+.customer-card{display:grid;grid-template-columns:58px 1fr 25px;align-items:center;text-align:left;gap:12px;background:#0a1825;border:1px solid #294c64}
+.customer-card small{color:#8fa7ba}
+.avatar{width:58px;height:58px;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:#172d40;font-size:25px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.customer-headline{display:flex;gap:13px;align-items:center}
+.customer-headline .avatar{width:72px;height:72px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}
+.stat{padding:14px;border-radius:14px;background:#091925;border:1px solid #203e53}
+.stat small{display:block;color:#8fa7ba}.stat strong{display:block;margin-top:4px;font-size:20px}
+.live{color:#5ff0b0;font-weight:800;font-size:12px}
+.tablewrap{overflow:auto}
+table{width:100%;min-width:650px;border-collapse:collapse}
+th,td{padding:11px 9px;border-bottom:1px solid #203a4e;text-align:left}
+th{color:#9ec0d8;font-size:13px}
+.notice{padding:13px;border:1px solid #294c64;border-radius:14px;margin:9px 0;background:#0a1825}
+.notice.unread{border-color:#13a874}
+.notice b{display:block}.notice small{display:block;color:#8fa7ba;margin-top:3px}
+.message{padding:11px 13px;border-radius:14px;background:#13283a;margin:8px 0}
+.message.customer{background:#0b503d}
+.message .small{font-size:11px;color:#8fa7ba;margin-top:4px}
+#messageForm{display:grid;gap:8px;margin-top:12px}
+.hidden{display:none!important}
+.footer{text-align:center;color:#70869a;padding:20px}
+@media(max-width:650px){.stats{grid-template-columns:1fr}.customer-hero{padding:18px 5px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
 
- // IMPORTANT: onValue keeps this customer account LIVE.
- // Owner-side synced changes to this node immediately redraw the portal.
- onValue(liveRef,snap=>{
-   const liveShop=snap.val();
-   if(!liveShop){
-     view.innerHTML='<div class="panel result-error"><b>Account unavailable</b><p>This customer access record is no longer available.</p><button class="secondary" id="portalBack">Back / Logout</button></div>';
-     document.querySelector('#portalBack').onclick=()=>location.reload();
-     return;
-   }
+<header class="customer-nav">
+  <a href="https://www.appcreator24.com/app4199946-rjgbs2">📱 Download App</a>
+  <select id="languageSelect" class="lang">
+    <option value="en">English</option>
+    <option value="ne">नेपाली</option>
+  </select>
+</header>
 
-   const c=liveShop.account||{};
-   let total=0,paid=0,rows='';
-   Object.values(c.transactions||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).forEach(x=>{
-     if(x.type==='credit') total+=Number(x.amount)||0;
-     else paid+=Number(x.amount)||0;
-     const qty=Number(x.qty)||1,unit=x.unit||'pcs',mrp=Number(x.mrp)||0;
-     rows+=`<tr>
-       <td>${esc(formatDateTime(x.createdAt,x.date))}</td>
-       <td>${esc(x.item||'Payment')}</td>
-       <td>${x.type==='credit'?money(mrp)+' / '+esc(unit):'—'}</td>
-       <td>${x.type==='credit'?esc(qty+' '+unit):'—'}</td>
-       <td>${x.type==='credit'?money(x.amount):'-'+money(x.amount)}</td>
-     </tr>`;
-   });
+<section id="login" class="panel customer-hero">
+  <div class="portal-icon">🔐</div>
+  <span class="portal-badge">PRIVATE CUSTOMER ACCESS</span>
+  <h1 id="title">Secure Customer Portal</h1>
+  <p class="hint" id="hint">Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.</p>
+  <form id="mobileForm" class="portal-form">
+    <label><span>Mobile number</span>
+      <input id="mobile" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX">
+    </label>
+    <button type="submit">Continue</button>
+  </form>
+  <div id="loginError"></div>
+</section>
 
-   const notes=Object.entries(liveShop.notifications||{})
-     .sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+<section id="shopStep" class="panel hidden">
+  <h2>Select Shop</h2>
+  <p class="muted">Choose the shop linked with your mobile number.</p>
+  <div id="shopList" class="customer-grid"></div>
+  <button id="changeMobile" class="secondary">← Change Mobile</button>
+</section>
 
-   view.innerHTML=`
-   <div class="panel">
-     <div class="customer-headline">
-       <div class="avatar shop-photo-avatar">
-         ${liveShop.shopPhoto?`<img src="${esc(liveShop.shopPhoto)}" alt="">`:'🏪'}
-       </div>
-       <div>
-         <h2>${esc(liveShop.shopName||'Shop')}</h2>
-         <p>${esc(c.name||'Customer')} • ${esc(c.mobile||'')}</p>
-         <small style="color:#19c985;font-weight:800">● LIVE DATA</small>
-       </div>
-     </div>
-     <div class="stats">
-       <div class="stat"><small>Credit</small><strong>${money(total)}</strong></div>
-       <div class="stat"><small>Paid</small><strong>${money(paid)}</strong></div>
-       <div class="stat"><small>Balance</small><strong>${money(total-paid)}</strong></div>
-     </div>
-   </div>
+<section id="pinStep" class="panel hidden">
+  <h2>Enter Digital PIN</h2>
+  <div id="pinShop"></div>
+  <form id="pinForm" class="portal-form">
+    <label><span>6-digit PIN</span>
+      <input id="pin" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" autocomplete="off" required>
+    </label>
+    <button type="submit">Open Account</button>
+    <button type="button" id="backShops" class="secondary">← Back</button>
+  </form>
+  <div id="pinError"></div>
+</section>
 
-   <div class="panel">
-     <h2>Transactions</h2>
-     <div class="tablewrap"><table>
-       <thead><tr><th>Date & Time</th><th>Item</th><th>Original Price</th><th>Qty</th><th>Total</th></tr></thead>
-       <tbody>${rows||'<tr><td colspan="5">No transactions</td></tr>'}</tbody>
-     </table></div>
-   </div>
+<section id="account" class="hidden">
+  <div id="accountContent"></div>
+</section>
 
-   <div class="panel">
-     <h2>🔔 Notifications</h2>
-     ${notes.length?notes.map(([,n])=>`
-       <div class="panel">
-         <b>${esc(n.title||'Notification')}</b>
-         <small>${esc(formatDateTime(n.createdAt,''))}</small>
-         <p>${esc(n.message||'')}</p>
-       </div>`).join(''):'<p>No notifications yet.</p>'}
-   </div>
+<div class="footer">© 2026 KhataPro • Customer Portal</div>
+</div>
 
-   <button class="secondary" id="portalBack">Back / Logout</button>
-   </div>`;
+<script type="module">
+/* =========================================================
+   KHATAPRO CUSTOMER PORTAL
+   Single-file version.
+   Firebase Realtime Database + real-time onValue().
+   ========================================================= */
 
-   document.querySelector('#portalBack').onclick=()=>location.reload();
- });
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getDatabase, ref, get, onValue, push, set, update
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyCrGE...",
+  authDomain:"public-project-4d672.firebaseapp.com",
+  databaseURL:"https://public-project-4d672-default-rtdb.firebaseio.com",
+  projectId:"public-project-4d672",
+  storageBucket:"public-project-4d672.firebasestorage.app",
+  messagingSenderId:"265276656656",
+  appId:"1:265276656656:web:c2bc539cab446e51b88e95",
+  measurementId:"G-13XVC26YTQ"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+const $=id=>document.getElementById(id);
+
+let currentMobile="";
+let selectedUid="";
+let selectedShop=null;
+let accessKey="";
+let liveStop=null;
+
+const cleanMobile=v=>String(v||"").replace(/\D/g,"");
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[m]));
+
+const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+});
+
+const hashText=async text=>{
+  const data=new TextEncoder().encode(text);
+  const h=await crypto.subtle.digest("SHA-256",data);
+  return [...new Uint8Array(h)]
+    .map(b=>b.toString(16).padStart(2,"0")).join("");
+};
+
+const formatDateTime=ts=>{
+  if(!ts)return "—";
+  const d=new Date(Number(ts));
+  if(Number.isNaN(d.getTime()))return String(ts);
+  return d.toLocaleString(
+    localStorage.getItem("khata_lang")==="ne"?"ne-NP":"en-IN",
+    {dateStyle:"short",timeStyle:"short",hour12:true}
+  );
+};
+
+function showOnly(id){
+  ["login","shopStep","pinStep","account"].forEach(x=>$(x).classList.add("hidden"));
+  $(id).classList.remove("hidden");
 }
-</script></body></html>
 
-<marquee> please enter your mobile number click continue button show your credit acount shop select shop enter 6- digital pin open your acount </marquee>
+function errorBox(id,msg){
+  $(id).innerHTML=msg?`<div class="result-error">${esc(msg)}</div>`:"";
+}
+
+function resetPortal(){
+  if(liveStop){liveStop();liveStop=null}
+  currentMobile="";
+  selectedUid="";
+  selectedShop=null;
+  accessKey="";
+  $("mobile").value="";
+  $("pin").value="";
+  $("shopList").innerHTML="";
+  errorBox("loginError","");
+  errorBox("pinError","");
+  showOnly("login");
+}
+
+/* ---------------- MOBILE LOOKUP ---------------- */
+$("mobileForm").onsubmit=async e=>{
+  e.preventDefault();
+
+  currentMobile=cleanMobile($("mobile").value);
+
+  if(currentMobile.length<7){
+    errorBox("loginError","Account not found. Check your mobile number.");
+    return;
+  }
+
+  errorBox("loginError","");
+  showOnly("shopStep");
+  $("shopList").innerHTML='<div class="panel muted">Finding your shops…</div>';
+
+  try{
+    const mobileHash=await hashText(currentMobile);
+
+    /*
+      Current KhataPro index:
+      customerIndex/{SHA-256(mobile)}
+    */
+    let index=(await get(
+      ref(db,`customerIndex/${mobileHash}`)
+    )).val();
+
+    /*
+      Compatibility with older KhataPro builds.
+    */
+    if(!index){
+      index=(await get(
+        ref(db,`customerAccessByMobile/${currentMobile}`)
+      )).val();
+    }
+
+    if(!index){
+      $("shopList").innerHTML=
+        '<div class="result-error"><b>Account not found</b><br>No shop is registered with this mobile number.</div>';
+      return;
+    }
+
+    let shops=[];
+
+    if(index.shops && typeof index.shops==="object"){
+      shops=Object.entries(index.shops).map(([uid,x])=>({
+        uid,
+        ...(x||{})
+      }));
+    }else{
+      shops=Object.entries(index)
+        .filter(([k,x])=>k!=="shops" && x && typeof x==="object")
+        .map(([uid,x])=>({
+          uid,
+          ...(x||{})
+        }));
+    }
+
+    shops=shops.filter(x=>x.enabled!==false);
+
+    if(!shops.length){
+      $("shopList").innerHTML=
+        '<div class="result-error"><b>Account not found</b><br>No shop is registered with this mobile number.</div>';
+      return;
+    }
+
+    $("shopList").innerHTML="";
+
+    shops.forEach(shop=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="customer-card";
+
+      const photo=shop.shopPhoto||shop.photo||"";
+
+      b.innerHTML=`
+        <div class="avatar">
+          ${photo?`<img src="${esc(photo)}" alt="">`:"🏪"}
+        </div>
+        <div>
+          <h3>${esc(shop.shopName||shop.name||"Shop")}</h3>
+          <small>${esc(shop.address||"Enter PIN for this shop")}</small>
+        </div>
+        <strong>›</strong>
+      `;
+
+      b.onclick=()=>{
+        selectedUid=shop.uid;
+        selectedShop=shop;
+
+        $("pinShop").innerHTML=`
+          <div class="panel">
+            <div class="customer-headline">
+              <div class="avatar">
+                ${photo?`<img src="${esc(photo)}" alt="">`:"🏪"}
+              </div>
+              <div>
+                <h3>${esc(shop.shopName||shop.name||"Shop")}</h3>
+                <div class="muted">${esc(shop.address||"")}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        $("pin").value="";
+        errorBox("pinError","");
+        showOnly("pinStep");
+        setTimeout(()=>$("pin").focus(),50);
+      };
+
+      $("shopList").appendChild(b);
+    });
+
+  }catch(err){
+    console.error(err);
+    $("shopList").innerHTML=
+      '<div class="result-error">Firebase connection failed. Please check internet and Firebase Rules.</div>';
+  }
+};
+
+/* ---------------- PIN LOGIN ---------------- */
+$("pinForm").onsubmit=async e=>{
+  e.preventDefault();
+
+  const pin=$("pin").value.trim();
+
+  if(!/^\d{6}$/.test(pin)){
+    errorBox("pinError","PIN must contain exactly 6 digits.");
+    return;
+  }
+
+  errorBox("pinError","Checking…");
+
+  try{
+    accessKey=await hashText(`${currentMobile}|${pin}`);
+
+    const snap=await get(
+      ref(db,`customerAccess/${accessKey}/shops/${selectedUid}`)
+    );
+
+    const shop=snap.val();
+
+    if(!shop){
+      errorBox(
+        "pinError",
+        "Account not found. Check mobile number, selected shop and PIN."
+      );
+      return;
+    }
+
+    /*
+      Verify the mobile stored inside the access record too.
+    */
+    const storedMobile=cleanMobile(
+      shop.account?.mobile ||
+      shop.customer?.mobile ||
+      currentMobile
+    );
+
+    if(storedMobile && storedMobile!==currentMobile){
+      errorBox("pinError","Account not found. Mobile number does not match.");
+      return;
+    }
+
+    openLiveAccount();
+
+  }catch(err){
+    console.error(err);
+    errorBox("pinError","Unable to open account. Please try again.");
+  }
+};
+
+/* ---------------- REAL-TIME ACCOUNT ---------------- */
+function openLiveAccount(){
+
+  showOnly("account");
+
+  const liveRef=ref(
+    db,
+    `customerAccess/${accessKey}/shops/${selectedUid}`
+  );
+
+  /*
+    THIS IS THE IMPORTANT PART:
+    No one-time get() for the account after login.
+    onValue() stays connected and redraws the portal whenever
+    Firebase changes this customerAccess shop record.
+  */
+  liveStop=onValue(
+    liveRef,
+    snap=>{
+      const shop=snap.val();
+
+      if(!shop){
+        $("accountContent").innerHTML=`
+          <div class="panel result-error">
+            <b>Account unavailable</b>
+            <p>This customer access record is no longer available.</p>
+            <button id="portalBack" class="secondary">Back / Logout</button>
+          </div>`;
+        $("portalBack").onclick=resetPortal;
+        return;
+      }
+
+      renderAccount(shop);
+    },
+    err=>{
+      console.error(err);
+      $("accountContent").innerHTML=`
+        <div class="panel result-error">
+          <b>Live connection problem</b>
+          <p>Please check your internet connection and Firebase Rules.</p>
+          <button id="portalBack" class="secondary">Back / Logout</button>
+        </div>`;
+      $("portalBack").onclick=resetPortal;
+    }
+  );
+}
+
+/* ---------------- ACCOUNT RENDER ---------------- */
+function renderAccount(shop){
+
+  const c=shop.account||shop.customer||{};
+  const shopName=shop.shopName||selectedShop?.shopName||"Shop";
+  const shopPhoto=shop.shopPhoto||selectedShop?.shopPhoto||"";
+
+  let credit=0;
+  let paid=0;
+  let rows=[];
+
+  const transactions=
+    shop.transactions ||
+    c.transactions ||
+    {};
+
+  Object.entries(transactions).forEach(([id,x])=>{
+    const t=x||{};
+    const amount=Number(t.amount??t.total??0);
+
+    if(String(t.type||"credit").toLowerCase()==="credit"){
+      credit+=amount;
+    }else{
+      paid+=amount;
+    }
+
+    rows.push({id,...t});
+  });
+
+  rows.sort(
+    (a,b)=>Number(b.createdAt||b.timestamp||0)-
+           Number(a.createdAt||a.timestamp||0)
+  );
+
+  const notes=Object.entries(shop.notifications||{})
+    .map(([id,n])=>({id,...(n||{})}))
+    .sort(
+      (a,b)=>Number(b.createdAt||b.timestamp||0)-
+             Number(a.createdAt||a.timestamp||0)
+    );
+
+  const messages=Object.entries(shop.messages||{})
+    .map(([id,m])=>({id,...(m||{})}))
+    .sort(
+      (a,b)=>Number(a.timestamp||a.createdAt||0)-
+             Number(b.timestamp||b.createdAt||0)
+    );
+
+  $("accountContent").innerHTML=`
+    <div class="panel">
+      <div class="customer-headline">
+        <div class="avatar">
+          ${shopPhoto?`<img src="${esc(shopPhoto)}" alt="">`:"🏪"}
+        </div>
+
+        <div>
+          <h2>${esc(shopName)}</h2>
+          <p>${esc(c.name||"Customer")} • ${esc(c.mobile||currentMobile)}</p>
+          <div class="live">● LIVE DATA</div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <small>Credit</small>
+          <strong>${money(credit)}</strong>
+        </div>
+        <div class="stat">
+          <small>Paid</small>
+          <strong>${money(paid)}</strong>
+        </div>
+        <div class="stat">
+          <small>Balance</small>
+          <strong>${money(credit-paid)}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Transactions</h2>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Item</th>
+              <th>Original Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${
+              rows.length
+              ?rows.map(t=>{
+                const type=String(t.type||"credit").toLowerCase();
+                const qty=t.qty??t.quantity??"";
+                const unit=t.unit||"";
+                const mrp=Number(t.mrp??t.originalPrice??t.price??0);
+                const amount=Number(t.amount??t.total??0);
+
+                return `
+                  <tr>
+                    <td>${esc(formatDateTime(t.createdAt||t.timestamp))}</td>
+                    <td>${esc(t.item||t.itemName||t.product||"Payment")}</td>
+                    <td>
+                      ${type==="credit"
+                        ?money(mrp)+(unit?" / "+esc(unit):"")
+                        :"—"}
+                    </td>
+                    <td>
+                      ${type==="credit"
+                        ?esc(String(qty)+(unit?" "+unit:""))
+                        :"—"}
+                    </td>
+                    <td>
+                      ${type==="credit"
+                        ?money(amount)
+                        :"-"+money(amount)}
+                    </td>
+                  </tr>`;
+              }).join("")
+              :'<tr><td colspan="5">No transactions yet.</td></tr>'
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>🔔 Notifications</h2>
+
+      ${
+        notes.length
+        ?notes.map(n=>`
+          <div class="notice ${n.read?"":"unread"}">
+            <b>${esc(n.title||"Notification")}</b>
+            <small>${esc(formatDateTime(n.createdAt||n.timestamp))}</small>
+            <p>${esc(n.message||n.text||"")}</p>
+          </div>
+        `).join("")
+        :'<p class="muted">No notifications yet.</p>'
+      }
+
+      <button id="showNow">Show Now</button>
+    </div>
+
+    <div class="panel">
+      <h2>💬 Messages <span class="live">● LIVE</span></h2>
+
+      <div id="messageList">
+        ${
+          messages.length
+          ?messages.map(m=>`
+            <div class="message ${m.sender==="customer"?"customer":""}">
+              <b>${m.sender==="customer"?"You":"Shop"}</b>
+              <div>${esc(m.text||m.message||"")}</div>
+              <div class="small">
+                ${esc(formatDateTime(m.timestamp||m.createdAt))}
+              </div>
+            </div>
+          `).join("")
+          :'<p class="muted">No messages yet.</p>'
+        }
+      </div>
+
+      <form id="messageForm">
+        <input id="messageInput" maxlength="500" placeholder="Message shop">
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="live">● Firebase Live Connection Active</div>
+      <p class="muted">
+        Customer data updates automatically when the Firebase customer-access
+        record changes.
+      </p>
+      <button id="portalBack" class="secondary">Back / Logout</button>
+    </div>
+  `;
+
+  $("portalBack").onclick=resetPortal;
+
+  $("showNow").onclick=async()=>{
+    try{
+      const nr=ref(
+        db,
+        `customerAccess/${accessKey}/shops/${selectedUid}/notifications`
+      );
+
+      const snap=await get(nr);
+      const data=snap.val()||{};
+      const patch={};
+
+      Object.keys(data).forEach(id=>{
+        patch[`${id}/read`]=true;
+      });
+
+      if(Object.keys(patch).length){
+        await update(nr,patch);
+      }
+    }catch(err){
+      console.error(err);
+    }
+  };
+
+  $("messageForm").onsubmit=async e=>{
+    e.preventDefault();
+
+    const text=$("messageInput").value.trim();
+    if(!text)return;
+
+    try{
+      const mr=push(
+        ref(
+          db,
+          `customerAccess/${accessKey}/shops/${selectedUid}/messages`
+        )
+      );
+
+      await set(mr,{
+        sender:"customer",
+        text,
+        timestamp:Date.now(),
+        read:false
+      });
+
+      $("messageInput").value="";
+    }catch(err){
+      console.error(err);
+      alert("Message could not be sent.");
+    }
+  };
+}
+
+/* ---------------- NAVIGATION ---------------- */
+$("changeMobile").onclick=resetPortal;
+
+$("backShops").onclick=()=>{
+  if(liveStop){liveStop();liveStop=null}
+  showOnly("shopStep");
+};
+
+$("languageSelect").onchange=e=>{
+  localStorage.setItem("khata_lang",e.target.value);
+  if(e.target.value==="ne"){
+    $("title").textContent="सुरक्षित ग्राहक पोर्टल";
+    $("hint").textContent="आफ्नो मोबाइल नम्बर लेख्नुहोस्। त्यसपछि पसल छानेर ६ अंकको Digital PIN लेख्नुहोस्।";
+  }else{
+    $("title").textContent="Secure Customer Portal";
+    $("hint").textContent="Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.";
+  }
+};
+
+if(localStorage.getItem("khata_lang")){
+  $("languageSelect").value=localStorage.getItem("khata_lang");
+  $("languageSelect").dispatchEvent(new Event("change"));
+}
+</script>
+</body>
+</html>
