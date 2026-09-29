@@ -1,670 +1,76 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Customer Portal • KhataPro</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#07111d;color:#eef7ff}
-a{text-decoration:none;color:inherit}
-.wrap{max-width:920px;margin:auto;padding:14px}
-.customer-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0}
-.customer-nav a,.lang{padding:10px 13px;border:1px solid #284961;border-radius:12px;background:#0c1c2a;color:#fff}
-.lang{width:auto}
-.panel{background:#0d1d2b;border:1px solid #24465e;border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 15px 45px #0005}
-.customer-hero{text-align:center;padding:25px 18px}
-.portal-icon{font-size:42px}.portal-badge{display:inline-block;margin:8px 0;padding:6px 10px;border-radius:999px;background:#0b9365;font-size:12px;font-weight:800}
-h1,h2,h3{margin:0 0 9px}.hint,.muted{color:#9bb1c4}
-.portal-form{display:grid;gap:10px;max-width:520px;margin:18px auto 0;text-align:left}
-label span{display:block;margin-bottom:6px;font-weight:700}
-input{width:100%;padding:14px;border-radius:12px;border:1px solid #31536b;background:#071521;color:#fff;font-size:16px;outline:none}
-button{width:100%;padding:13px;border:0;border-radius:12px;background:#1498ed;color:#fff;font-size:16px;font-weight:800;cursor:pointer}
-button.secondary{background:#172d40}
-.result-error{padding:14px;border-radius:13px;background:#341b21;border:1px solid #71343e;color:#ffd9de}
-.customer-grid{display:grid;gap:10px}
-.customer-card{display:grid;grid-template-columns:58px 1fr 25px;align-items:center;text-align:left;gap:12px;background:#0a1825;border:1px solid #294c64}
-.customer-card small{color:#8fa7ba}
-.avatar{width:58px;height:58px;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:#172d40;font-size:25px}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.customer-headline{display:flex;gap:13px;align-items:center}
-.customer-headline .avatar{width:72px;height:72px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}
-.stat{padding:14px;border-radius:14px;background:#091925;border:1px solid #203e53}
-.stat small{display:block;color:#8fa7ba}.stat strong{display:block;margin-top:4px;font-size:20px}
-.live{color:#5ff0b0;font-weight:800;font-size:12px}
-.tablewrap{overflow:auto}
-table{width:100%;min-width:650px;border-collapse:collapse}
-th,td{padding:11px 9px;border-bottom:1px solid #203a4e;text-align:left}
-th{color:#9ec0d8;font-size:13px}
-.notice{padding:13px;border:1px solid #294c64;border-radius:14px;margin:9px 0;background:#0a1825}
-.notice.unread{border-color:#13a874}
-.notice b{display:block}.notice small{display:block;color:#8fa7ba;margin-top:3px}
-.message{padding:11px 13px;border-radius:14px;background:#13283a;margin:8px 0}
-.message.customer{background:#0b503d}
-.message .small{font-size:11px;color:#8fa7ba;margin-top:4px}
-#messageForm{display:grid;gap:8px;margin-top:12px}
-.hidden{display:none!important}
-.footer{text-align:center;color:#70869a;padding:20px}
-@media(max-width:650px){.stats{grid-template-columns:1fr}.customer-hero{padding:18px 5px}.panel{padding:14px}}
-</style>
-</head>
-<body>
-<div class="wrap">
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Customer Portal • KhataPro</title><link rel="stylesheet" href="css/style.css"><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
+:root{--bg:#f4f7fb;--surface:#fff;--surface2:#f8fafc;--text:#142033;--muted:#6b778c;--line:#e4e9f1;--primary:#3157e8;--primary2:#6b5cff;--green:#0f9d72;--red:#e5484d;--amber:#d18b00;--shadow:0 16px 50px rgba(24,39,75,.08);--radius:20px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% 0%,#edf2ff 0,#f4f7fb 34%,#f8fafc 100%);color:var(--text);font-family:Inter,'Noto Sans Devanagari',system-ui,sans-serif}body:lang(ne){font-family:'Noto Sans Devanagari',Inter,system-ui,sans-serif}a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.top{height:72px;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(4%,24px);position:sticky;top:0;z-index:20}.brand{display:flex;gap:12px;align-items:center;font-size:21px;font-weight:800}.brandmark{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary2));display:grid;place-items:center;color:#fff;box-shadow:0 10px 25px #3157e833}.brand small{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px}.mini{font-weight:800}.top-right{display:flex;align-items:center;gap:9px}.lang{border:1px solid var(--line);background:#fff;padding:9px 11px;border-radius:12px;font-weight:700;color:#334155}.ghost,.secondary,.primary,.linkbtn{border:0;border-radius:12px;padding:11px 15px;transition:.2s}.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:800;box-shadow:0 9px 22px #3157e82b}.primary:hover{transform:translateY(-1px)}.secondary{background:#edf2ff;color:#2948b9;font-weight:750}.ghost{background:#eef2f7;color:#344054;font-weight:650}.linkbtn{background:none;color:var(--primary);font-weight:700}.btn{display:inline-flex;align-items:center;justify-content:center}
+.wrap{width:min(1160px,92%);margin:32px auto}.narrow{max-width:780px}.formwrap{width:min(820px,92%);margin:35px auto}.auth-bg,.customer-bg{min-height:100vh;background:radial-gradient(circle at 10% 5%,#dfe8ff,transparent 34%),radial-gradient(circle at 90% 90%,#e5fff5,transparent 35%),#f5f7fb}.auth-card{width:min(470px,92%);margin:7vh auto;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:28px;padding:32px;box-shadow:0 25px 80px rgba(38,57,102,.14)}.auth-logo{display:flex;align-items:center;gap:13px;margin-bottom:25px}.auth-logo .brandmark{width:52px;height:52px}.auth-logo h1{font-size:25px;margin:0}.auth-logo p{margin:4px 0;color:var(--muted);font-size:12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#f0f3f8;padding:5px;border-radius:14px;margin:22px 0}.tab{border:0;background:transparent;padding:11px;border-radius:10px;font-weight:700;color:#687386}.tab.active{background:#fff;color:var(--primary);box-shadow:0 4px 14px #1f29370d}
+.or-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.08em}.or-divider:before,.or-divider:after{content:'';height:1px;background:var(--line);flex:1}.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--line);background:#fff;color:#172033;border-radius:12px;padding:11px 15px;font-weight:800;box-shadow:0 5px 16px rgba(24,39,75,.05);transition:.2s}.google-btn:hover{transform:translateY(-1px);box-shadow:0 9px 22px rgba(24,39,75,.09)}.google-icon{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-family:Arial,sans-serif;font-size:18px;color:#4285f4;background:#f7f9ff}
+.customer-entry{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+label{display:block;font-weight:700;font-size:13px;margin:15px 0;color:#344054}input,textarea,select{width:100%;padding:13px 14px;border:1px solid #d9e0eb;border-radius:12px;background:#fff;color:var(--text);outline:none;margin-top:7px}input:focus,textarea:focus,select:focus{border-color:#7690ef;box-shadow:0 0 0 4px #3157e812}textarea{min-height:100px;resize:vertical}.msg{min-height:22px;color:var(--green);margin:14px 0 0}.error{color:var(--red)!important}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.full{grid-column:1/-1}.check{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:12px}.check input{width:auto;margin:2px 0 0}.hint{color:var(--muted);font-size:12px;line-height:1.55}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:22px 0 25px;padding:28px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(135deg,#fff,#f8faff);box-shadow:var(--shadow)}.eyebrow{font-size:11px;letter-spacing:.12em;color:#718096;font-weight:850;margin:0 0 7px;text-transform:uppercase}.hero h1,.pagehead h1,.formwrap h1{font-size:clamp(28px,4vw,42px);line-height:1.1;margin:0 0 8px}.hero p{color:var(--muted);margin:0}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:18px 0}.stat{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:18px;padding:19px;box-shadow:0 7px 25px rgba(30,50,90,.04)}.stat small{display:block;color:var(--muted);font-weight:650}.stat strong{display:block;font-size:25px;margin-top:7px;letter-spacing:-.02em}.stat .green{color:var(--green)}.stat .red{color:var(--red)}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:20px;padding:22px;margin:18px 0;box-shadow:0 8px 28px rgba(30,50,90,.035)}.panel h2{margin:0 0 15px;font-size:18px}.panel-head,.pagehead{display:flex;align-items:center;justify-content:space-between;gap:12px}.pagehead{margin-bottom:20px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}.action{padding:16px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(135deg,#fbfcff,#f6f8fc);font-weight:750;transition:.2s}.action:hover{transform:translateY(-2px);border-color:#b8c6ef;box-shadow:var(--shadow)}.shopcard{line-height:1.8;color:#536176}.listrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 4px;border-bottom:1px solid var(--line)}.listrow:last-child{border-bottom:0}.listrow span small{display:block;color:var(--muted);margin-top:4px}.muted{color:var(--muted)}
+.searchbar{position:relative;margin:15px 0}.searchbar input{padding-left:42px}.search-icon{position:absolute;left:15px;top:21px;color:#7a8799}.customer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.customer-card{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;text-align:left;width:100%;transition:.2s}.customer-card:hover{transform:translateY(-2px);border-color:#b7c5ef;box-shadow:var(--shadow)}.customer-card h3{margin:0 0 5px;font-size:16px}.customer-card p,.customer-card small{color:var(--muted);margin:4px 0}.customer-card>strong{margin-left:auto}.avatar{width:46px;height:46px;flex:0 0 46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#e7edff,#f0eaff);color:#3b55c7;font-weight:850}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;min-width:650px;background:#fff}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px;background:#f8fafc}tr:last-child td{border-bottom:0}.credit{color:var(--red);font-weight:750}.paid{color:var(--green);font-weight:750}.danger{color:var(--red)}
+.modal{position:fixed;inset:0;background:#10182899;display:grid;place-items:center;padding:20px;z-index:50}.modalbox{background:#fff;border-radius:22px;padding:25px;width:min(470px,100%);position:relative;box-shadow:0 25px 80px #0003}.close{position:absolute;right:15px;top:13px;border:0;background:#eef2f7;border-radius:50%;width:35px;height:35px;font-size:21px}.pin-box{margin:15px 0;padding:17px;border:1px dashed #9aa9d8;background:#f5f7ff;border-radius:16px;text-align:center}.pin-code{font-size:31px;font-weight:850;letter-spacing:.18em;color:var(--primary);margin:7px 0}.customer-hero{width:100%;margin:0 0 20px;background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:var(--shadow)}.portal-icon{width:68px;height:68px;border-radius:20px;background:linear-gradient(135deg,#e7edff,#f0eaff);display:grid;place-items:center;font-size:30px;margin-bottom:14px}.portal-form{max-width:520px}.portal-form button{width:100%;margin-top:8px}.portal-form input{text-align:center;font-size:17px}.portal-badge{display:inline-flex;padding:8px 11px;border-radius:999px;background:#eef2ff;color:#3157e8;font-size:12px;font-weight:800}.result-error{background:#fff4f4;border:1px solid #ffd0d0;color:#b42318;padding:15px;border-radius:15px}.account-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.balance{font-size:34px;font-weight:850;color:var(--primary)}.back{margin-bottom:5px}.privacy{font-size:12px;color:#7a5b00;background:#fff9df;border:1px solid #f3e5a5;padding:12px;border-radius:12px}.customer-nav{width:min(780px,92%);margin:20px auto 0;display:flex;justify-content:space-between;align-items:center}.portal-brand{font-size:20px;font-weight:850}.portal-result{margin-top:18px}
+.mobile-nav{display:none}.footer-note{text-align:center;color:#8893a6;font-size:12px;margin:30px 0}.success{background:#effbf5;border:1px solid #b7ebd0;color:#087443;padding:14px;border-radius:14px}.empty{padding:30px;text-align:center;color:var(--muted)}
+@media(max-width:850px){.stats{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.top{padding:0 4%}.top .ghost{font-size:12px}.customer-grid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.panel{padding:18px}.actions{grid-template-columns:1fr}.mobile-nav{display:flex;position:fixed;bottom:12px;left:4%;right:4%;height:64px;background:rgba(255,255,255,.95);backdrop-filter:blur(15px);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 45px #1f293726;z-index:30;align-items:center;justify-content:space-around}.mobile-nav a{font-size:11px;color:#687386;text-align:center;font-weight:700}.mobile-nav a span{display:block;font-size:19px;margin-bottom:2px}.wrap{padding-bottom:85px}.top-right .lang{padding:8px}.top-right .ghost{display:none}}
+@media(max-width:500px){.top{height:64px}.brand{font-size:17px}.brandmark{width:37px;height:37px;border-radius:12px}.auth-card{padding:23px;border-radius:23px}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:20px}.hero{padding:21px}.pagehead{align-items:flex-start;flex-direction:column}.pagehead .btn{width:100%}.customer-hero{padding:22px}.panel-head{align-items:flex-start;flex-direction:column}.panel-head .primary,.panel-head .secondary{width:100%}}
 
-<header class="customer-nav">
-  <a href="https://www.appcreator24.com/app4199946-rjgbs2">📱 Download App</a>
-  <select id="languageSelect" class="lang">
-    <option value="en">English</option>
-    <option value="ne">नेपाली</option>
-  </select>
-</header>
+/* v5 photo + owner PIN enhancements */
+.customer-photo{overflow:hidden;flex:0 0 auto}
+.customer-photo img{width:100%;height:100%;display:block;object-fit:cover}
+.customer-photo.large{width:76px;height:76px;border-radius:20px;font-size:28px}
+.customer-headline{display:flex;align-items:center;gap:16px}
+.customer-main{min-width:0;flex:1}
+.pin-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:7px}
+.pin-label,.pin-value{font-size:12px;color:#64748b}
+.pin-value{font-weight:800;letter-spacing:1px;color:#1e293b}
+.small-action{font-size:12px;padding:5px 9px;border-radius:9px;cursor:pointer}
+.customer-pin-owner{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.pin-owner{font-size:13px;color:#64748b;white-space:nowrap}
+.pin-owner b{color:#111827;letter-spacing:1.5px}
+.photo-upload{display:block}
+.photo-preview-wrap{display:flex;align-items:center;gap:12px;margin-top:10px;flex-wrap:wrap}
+.photo-preview{width:110px;height:110px;object-fit:cover;border-radius:16px;border:1px solid #dbe4f0;box-shadow:0 8px 24px rgba(15,23,42,.08)}
+@media(max-width:720px){.customer-pin-owner{align-items:flex-start}.customer-headline{align-items:flex-start}.customer-photo.large{width:64px;height:64px}.pin-row{gap:5px}.pin-label,.pin-value{font-size:11px}}
 
-<section id="login" class="panel customer-hero">
-  <div class="portal-icon">🔐</div>
-  <span class="portal-badge">PRIVATE CUSTOMER ACCESS</span>
-  <h1 id="title">Secure Customer Portal</h1>
-  <p class="hint" id="hint">Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.</p>
-  <form id="mobileForm" class="portal-form">
-    <label><span>Mobile number</span>
-      <input id="mobile" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX">
-    </label>
-    <button type="submit">Continue</button>
-  </form>
-  <div id="loginError"></div>
-</section>
+/* Shop photo shown in Customer Portal */
+.shop-photo-avatar{overflow:hidden;padding:0;display:flex;align-items:center;justify-content:center;background:#eef6ff}
+.shop-photo-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.portal-shop-head{display:flex;align-items:center;gap:14px;min-width:0}
+.portal-shop-photo{width:64px;height:64px;min-width:64px;border-radius:16px;overflow:hidden;background:#eef6ff;display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid rgba(30,100,200,.12)}
+.portal-shop-photo img{width:100%;height:100%;object-fit:cover;display:block}
+@media(max-width:600px){.portal-shop-head{gap:10px}.portal-shop-photo{width:54px;height:54px;min-width:54px;border-radius:14px}}
 
-<section id="shopStep" class="panel hidden">
-  <h2>Select Shop</h2>
-  <p class="muted">Choose the shop linked with your mobile number.</p>
-  <div id="shopList" class="customer-grid"></div>
-  <button id="changeMobile" class="secondary">← Change Mobile</button>
-</section>
-
-<section id="pinStep" class="panel hidden">
-  <h2>Enter Digital PIN</h2>
-  <div id="pinShop"></div>
-  <form id="pinForm" class="portal-form">
-    <label><span>6-digit PIN</span>
-      <input id="pin" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" autocomplete="off" required>
-    </label>
-    <button type="submit">Open Account</button>
-    <button type="button" id="backShops" class="secondary">← Back</button>
-  </form>
-  <div id="pinError"></div>
-</section>
-
-<section id="account" class="hidden">
-  <div id="accountContent"></div>
-</section>
-
-<div class="footer">© 2026 KhataPro • Customer Portal</div>
-</div>
-
+/* v7 transaction safety + responsive tables */
+.transaction-table th,.transaction-table td{white-space:nowrap}
+@media(max-width:600px){.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}table{min-width:620px}.customer-bg .tablewrap table{min-width:620px}.account-top{flex-direction:column}.portal-shop-head{width:100%}}
+</style><style>.chatbox{display:grid;gap:8px;max-height:360px;overflow:auto;padding:10px;background:#f7f9fc;border:1px solid #e4e9f1;border-radius:14px}.chatmsg{max-width:82%;padding:10px 13px;border-radius:14px;background:#fff;border:1px solid #e4e9f1}.chatmsg.me{margin-left:auto;background:#eef4ff}.chatmeta{display:block;font-size:11px;color:#8792a5;margin-top:4px}.chatform{display:flex;gap:8px;margin-top:10px}.chatform input{flex:1}</style></head><body class="customer-bg"><header class="customer-nav"><a href="https://www.appcreator24.com/app4199946-rjgbs2" class="click the download app 📱">click the download app 📱 </a><select id="languageSelect" class="lang"><option value="en">English</option><option value="ne">नेपाली</option></select></header><main class="wrap narrow"><section class="customer-hero"><div class="portal-icon">🔐</div><span class="portal-badge" data-i18n="secure">Private & secure access</span><h1 data-i18n="customerPortalTitle">Secure Customer Portal</h1><p class="hint">Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.</p><form id="mobileForm" class="portal-form"><label><span data-i18n="mobile">Mobile number</span><input id="mobile" required inputmode="tel" autocomplete="tel" placeholder="98XXXXXXXX"></label><button class="primary" type="submit">Continue</button></form></section><section id="results" class="portal-result"></section><section id="view" class="hidden portal-result"></section></main>
 <script type="module">
-/* =========================================================
-   KHATAPRO CUSTOMER PORTAL
-   Single-file version.
-   Firebase Realtime Database + real-time onValue().
-   ========================================================= */
-
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getDatabase, ref, get, onValue, push, set, update
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
-const firebaseConfig={
-  apiKey:"AIzaSyCrGE...",
-  authDomain:"public-project-4d672.firebaseapp.com",
-  databaseURL:"https://public-project-4d672-default-rtdb.firebaseio.com",
-  projectId:"public-project-4d672",
-  storageBucket:"public-project-4d672.firebasestorage.app",
-  messagingSenderId:"265276656656",
-  appId:"1:265276656656:web:c2bc539cab446e51b88e95",
-  measurementId:"G-13XVC26YTQ"
-};
-
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
-
-const $=id=>document.getElementById(id);
-
-let currentMobile="";
-let selectedUid="";
-let selectedShop=null;
-let accessKey="";
-let liveStop=null;
-
-const cleanMobile=v=>String(v||"").replace(/\D/g,"");
-
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[m]));
-
-const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{
-  minimumFractionDigits:2,
-  maximumFractionDigits:2
-});
-
-const hashText=async text=>{
-  const data=new TextEncoder().encode(text);
-  const h=await crypto.subtle.digest("SHA-256",data);
-  return [...new Uint8Array(h)]
-    .map(b=>b.toString(16).padStart(2,"0")).join("");
-};
-
-const formatDateTime=ts=>{
-  if(!ts)return "—";
-  const d=new Date(Number(ts));
-  if(Number.isNaN(d.getTime()))return String(ts);
-  return d.toLocaleString(
-    localStorage.getItem("khata_lang")==="ne"?"ne-NP":"en-IN",
-    {dateStyle:"short",timeStyle:"short",hour12:true}
-  );
-};
-
-function showOnly(id){
-  ["login","shopStep","pinStep","account"].forEach(x=>$(x).classList.add("hidden"));
-  $(id).classList.remove("hidden");
-}
-
-function errorBox(id,msg){
-  $(id).innerHTML=msg?`<div class="result-error">${esc(msg)}</div>`:"";
-}
-
-function resetPortal(){
-  if(liveStop){liveStop();liveStop=null}
-  currentMobile="";
-  selectedUid="";
-  selectedShop=null;
-  accessKey="";
-  $("mobile").value="";
-  $("pin").value="";
-  $("shopList").innerHTML="";
-  errorBox("loginError","");
-  errorBox("pinError","");
-  showOnly("login");
-}
-
-/* ---------------- MOBILE LOOKUP ---------------- */
-$("mobileForm").onsubmit=async e=>{
-  e.preventDefault();
-
-  currentMobile=cleanMobile($("mobile").value);
-
-  if(currentMobile.length<7){
-    errorBox("loginError","Account not found. Check your mobile number.");
-    return;
-  }
-
-  errorBox("loginError","");
-  showOnly("shopStep");
-  $("shopList").innerHTML='<div class="panel muted">Finding your shops…</div>';
-
-  try{
-    const mobileHash=await hashText(currentMobile);
-
-    /*
-      Current KhataPro index:
-      customerIndex/{SHA-256(mobile)}
-    */
-    let index=(await get(
-      ref(db,`customerIndex/${mobileHash}`)
-    )).val();
-
-    /*
-      Compatibility with older KhataPro builds.
-    */
-    if(!index){
-      index=(await get(
-        ref(db,`customerAccessByMobile/${currentMobile}`)
-      )).val();
-    }
-
-    if(!index){
-      $("shopList").innerHTML=
-        '<div class="result-error"><b>Account not found</b><br>No shop is registered with this mobile number.</div>';
-      return;
-    }
-
-    let shops=[];
-
-    if(index.shops && typeof index.shops==="object"){
-      shops=Object.entries(index.shops).map(([uid,x])=>({
-        uid,
-        ...(x||{})
-      }));
-    }else{
-      shops=Object.entries(index)
-        .filter(([k,x])=>k!=="shops" && x && typeof x==="object")
-        .map(([uid,x])=>({
-          uid,
-          ...(x||{})
-        }));
-    }
-
-    shops=shops.filter(x=>x.enabled!==false);
-
-    if(!shops.length){
-      $("shopList").innerHTML=
-        '<div class="result-error"><b>Account not found</b><br>No shop is registered with this mobile number.</div>';
-      return;
-    }
-
-    $("shopList").innerHTML="";
-
-    shops.forEach(shop=>{
-      const b=document.createElement("button");
-      b.type="button";
-      b.className="customer-card";
-
-      const photo=shop.shopPhoto||shop.photo||"";
-
-      b.innerHTML=`
-        <div class="avatar">
-          ${photo?`<img src="${esc(photo)}" alt="">`:"🏪"}
-        </div>
-        <div>
-          <h3>${esc(shop.shopName||shop.name||"Shop")}</h3>
-          <small>${esc(shop.address||"Enter PIN for this shop")}</small>
-        </div>
-        <strong>›</strong>
-      `;
-
-      b.onclick=()=>{
-        selectedUid=shop.uid;
-        selectedShop=shop;
-
-        $("pinShop").innerHTML=`
-          <div class="panel">
-            <div class="customer-headline">
-              <div class="avatar">
-                ${photo?`<img src="${esc(photo)}" alt="">`:"🏪"}
-              </div>
-              <div>
-                <h3>${esc(shop.shopName||shop.name||"Shop")}</h3>
-                <div class="muted">${esc(shop.address||"")}</div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        $("pin").value="";
-        errorBox("pinError","");
-        showOnly("pinStep");
-        setTimeout(()=>$("pin").focus(),50);
-      };
-
-      $("shopList").appendChild(b);
-    });
-
-  }catch(err){
-    console.error(err);
-    $("shopList").innerHTML=
-      '<div class="result-error">Firebase connection failed. Please check internet and Firebase Rules.</div>';
-  }
-};
-
-/* ---------------- PIN LOGIN ---------------- */
-$("pinForm").onsubmit=async e=>{
-  e.preventDefault();
-
-  const pin=$("pin").value.trim();
-
-  if(!/^\d{6}$/.test(pin)){
-    errorBox("pinError","PIN must contain exactly 6 digits.");
-    return;
-  }
-
-  errorBox("pinError","Checking…");
-
-  try{
-    accessKey=await hashText(`${currentMobile}|${pin}`);
-
-    const snap=await get(
-      ref(db,`customerAccess/${accessKey}/shops/${selectedUid}`)
-    );
-
-    const shop=snap.val();
-
-    if(!shop){
-      errorBox(
-        "pinError",
-        "Account not found. Check mobile number, selected shop and PIN."
-      );
-      return;
-    }
-
-    /*
-      Verify the mobile stored inside the access record too.
-    */
-    const storedMobile=cleanMobile(
-      shop.account?.mobile ||
-      shop.customer?.mobile ||
-      currentMobile
-    );
-
-    if(storedMobile && storedMobile!==currentMobile){
-      errorBox("pinError","Account not found. Mobile number does not match.");
-      return;
-    }
-
-    openLiveAccount();
-
-  }catch(err){
-    console.error(err);
-    errorBox("pinError","Unable to open account. Please try again.");
-  }
-};
-
-/* ---------------- REAL-TIME ACCOUNT ---------------- */
-function openLiveAccount(){
-
-  showOnly("account");
-
-  const liveRef=ref(
-    db,
-    `customerAccess/${accessKey}/shops/${selectedUid}`
-  );
-
-  /*
-    THIS IS THE IMPORTANT PART:
-    No one-time get() for the account after login.
-    onValue() stays connected and redraws the portal whenever
-    Firebase changes this customerAccess shop record.
-  */
-  liveStop=onValue(
-    liveRef,
-    snap=>{
-      const shop=snap.val();
-
-      if(!shop){
-        $("accountContent").innerHTML=`
-          <div class="panel result-error">
-            <b>Account unavailable</b>
-            <p>This customer access record is no longer available.</p>
-            <button id="portalBack" class="secondary">Back / Logout</button>
-          </div>`;
-        $("portalBack").onclick=resetPortal;
-        return;
-      }
-
-      renderAccount(shop);
-    },
-    err=>{
-      console.error(err);
-      $("accountContent").innerHTML=`
-        <div class="panel result-error">
-          <b>Live connection problem</b>
-          <p>Please check your internet connection and Firebase Rules.</p>
-          <button id="portalBack" class="secondary">Back / Logout</button>
-        </div>`;
-      $("portalBack").onclick=resetPortal;
-    }
-  );
-}
-
-/* ---------------- ACCOUNT RENDER ---------------- */
-function renderAccount(shop){
-
-  const c=shop.account||shop.customer||{};
-  const shopName=shop.shopName||selectedShop?.shopName||"Shop";
-  const shopPhoto=shop.shopPhoto||selectedShop?.shopPhoto||"";
-
-  let credit=0;
-  let paid=0;
-  let rows=[];
-
-  const transactions=
-    shop.transactions ||
-    c.transactions ||
-    {};
-
-  Object.entries(transactions).forEach(([id,x])=>{
-    const t=x||{};
-    const amount=Number(t.amount??t.total??0);
-
-    if(String(t.type||"credit").toLowerCase()==="credit"){
-      credit+=amount;
-    }else{
-      paid+=amount;
-    }
-
-    rows.push({id,...t});
-  });
-
-  rows.sort(
-    (a,b)=>Number(b.createdAt||b.timestamp||0)-
-           Number(a.createdAt||a.timestamp||0)
-  );
-
-  const notes=Object.entries(shop.notifications||{})
-    .map(([id,n])=>({id,...(n||{})}))
-    .sort(
-      (a,b)=>Number(b.createdAt||b.timestamp||0)-
-             Number(a.createdAt||a.timestamp||0)
-    );
-
-  const messages=Object.entries(shop.messages||{})
-    .map(([id,m])=>({id,...(m||{})}))
-    .sort(
-      (a,b)=>Number(a.timestamp||a.createdAt||0)-
-             Number(b.timestamp||b.createdAt||0)
-    );
-
-  $("accountContent").innerHTML=`
-    <div class="panel">
-      <div class="customer-headline">
-        <div class="avatar">
-          ${shopPhoto?`<img src="${esc(shopPhoto)}" alt="">`:"🏪"}
-        </div>
-
-        <div>
-          <h2>${esc(shopName)}</h2>
-          <p>${esc(c.name||"Customer")} • ${esc(c.mobile||currentMobile)}</p>
-          <div class="live">● LIVE DATA</div>
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <small>Credit</small>
-          <strong>${money(credit)}</strong>
-        </div>
-        <div class="stat">
-          <small>Paid</small>
-          <strong>${money(paid)}</strong>
-        </div>
-        <div class="stat">
-          <small>Balance</small>
-          <strong>${money(credit-paid)}</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Transactions</h2>
-
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date & Time</th>
-              <th>Item</th>
-              <th>Original Price</th>
-              <th>Qty</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            ${
-              rows.length
-              ?rows.map(t=>{
-                const type=String(t.type||"credit").toLowerCase();
-                const qty=t.qty??t.quantity??"";
-                const unit=t.unit||"";
-                const mrp=Number(t.mrp??t.originalPrice??t.price??0);
-                const amount=Number(t.amount??t.total??0);
-
-                return `
-                  <tr>
-                    <td>${esc(formatDateTime(t.createdAt||t.timestamp))}</td>
-                    <td>${esc(t.item||t.itemName||t.product||"Payment")}</td>
-                    <td>
-                      ${type==="credit"
-                        ?money(mrp)+(unit?" / "+esc(unit):"")
-                        :"—"}
-                    </td>
-                    <td>
-                      ${type==="credit"
-                        ?esc(String(qty)+(unit?" "+unit:""))
-                        :"—"}
-                    </td>
-                    <td>
-                      ${type==="credit"
-                        ?money(amount)
-                        :"-"+money(amount)}
-                    </td>
-                  </tr>`;
-              }).join("")
-              :'<tr><td colspan="5">No transactions yet.</td></tr>'
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>🔔 Notifications</h2>
-
-      ${
-        notes.length
-        ?notes.map(n=>`
-          <div class="notice ${n.read?"":"unread"}">
-            <b>${esc(n.title||"Notification")}</b>
-            <small>${esc(formatDateTime(n.createdAt||n.timestamp))}</small>
-            <p>${esc(n.message||n.text||"")}</p>
-          </div>
-        `).join("")
-        :'<p class="muted">No notifications yet.</p>'
-      }
-
-      <button id="showNow">Show Now</button>
-    </div>
-
-    <div class="panel">
-      <h2>💬 Messages <span class="live">● LIVE</span></h2>
-
-      <div id="messageList">
-        ${
-          messages.length
-          ?messages.map(m=>`
-            <div class="message ${m.sender==="customer"?"customer":""}">
-              <b>${m.sender==="customer"?"You":"Shop"}</b>
-              <div>${esc(m.text||m.message||"")}</div>
-              <div class="small">
-                ${esc(formatDateTime(m.timestamp||m.createdAt))}
-              </div>
-            </div>
-          `).join("")
-          :'<p class="muted">No messages yet.</p>'
-        }
-      </div>
-
-      <form id="messageForm">
-        <input id="messageInput" maxlength="500" placeholder="Message shop">
-        <button type="submit">Send Message</button>
-      </form>
-    </div>
-
-    <div class="panel">
-      <div class="live">● Firebase Live Connection Active</div>
-      <p class="muted">
-        Customer data updates automatically when the Firebase customer-access
-        record changes.
-      </p>
-      <button id="portalBack" class="secondary">Back / Logout</button>
-    </div>
-  `;
-
-  $("portalBack").onclick=resetPortal;
-
-  $("showNow").onclick=async()=>{
-    try{
-      const nr=ref(
-        db,
-        `customerAccess/${accessKey}/shops/${selectedUid}/notifications`
-      );
-
-      const snap=await get(nr);
-      const data=snap.val()||{};
-      const patch={};
-
-      Object.keys(data).forEach(id=>{
-        patch[`${id}/read`]=true;
-      });
-
-      if(Object.keys(patch).length){
-        await update(nr,patch);
-      }
-    }catch(err){
-      console.error(err);
-    }
-  };
-
-  $("messageForm").onsubmit=async e=>{
-    e.preventDefault();
-
-    const text=$("messageInput").value.trim();
-    if(!text)return;
-
-    try{
-      const mr=push(
-        ref(
-          db,
-          `customerAccess/${accessKey}/shops/${selectedUid}/messages`
-        )
-      );
-
-      await set(mr,{
-        sender:"customer",
-        text,
-        timestamp:Date.now(),
-        read:false
-      });
-
-      $("messageInput").value="";
-    }catch(err){
-      console.error(err);
-      alert("Message could not be sent.");
-    }
-  };
-}
-
-/* ---------------- NAVIGATION ---------------- */
-$("changeMobile").onclick=resetPortal;
-
-$("backShops").onclick=()=>{
-  if(liveStop){liveStop();liveStop=null}
-  showOnly("shopStep");
-};
-
-$("languageSelect").onchange=e=>{
-  localStorage.setItem("khata_lang",e.target.value);
-  if(e.target.value==="ne"){
-    $("title").textContent="सुरक्षित ग्राहक पोर्टल";
-    $("hint").textContent="आफ्नो मोबाइल नम्बर लेख्नुहोस्। त्यसपछि पसल छानेर ६ अंकको Digital PIN लेख्नुहोस्।";
-  }else{
-    $("title").textContent="Secure Customer Portal";
-    $("hint").textContent="Enter your mobile number. Then choose your shop and enter your 6-digit Digital PIN.";
-  }
-};
-
-if(localStorage.getItem("khata_lang")){
-  $("languageSelect").value=localStorage.getItem("khata_lang");
-  $("languageSelect").dispatchEvent(new Event("change"));
-}
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import {getDatabase,ref,get,onValue,update,push,set} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js';
+const firebaseConfig={apiKey:'AIzaSyCrkGEIgNlAsmOtWtrlCkelYrqDd7j-SoA',authDomain:'public-project-4d672.firebaseapp.com',databaseURL:'https://public-project-4d672-default-rtdb.firebaseio.com',projectId:'public-project-4d672',storageBucket:'public-project-4d672.firebasestorage.app',messagingSenderId:'265276656656',appId:'1:265276656656:web:c2bc539cab446e51b88e95',measurementId:'G-13XVC26YTQ'};
+const db=getDatabase(initializeApp(firebaseConfig));
+const cleanMobile=m=>String(m||'').replace(/\D/g,'');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const hashText=async text=>{const d=new TextEncoder().encode(text),h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')};
+const formatDateTime=(ts,date)=>{const d=ts?new Date(ts):new Date((date||'')+'T00:00:00');return d.toLocaleString(localStorage.getItem('khata_lang')==='ne'?'ne-NP':'en-IN',{dateStyle:'short',timeStyle:'short',hour12:true})};
+const form=document.querySelector('#mobileForm'),results=document.querySelector('#results'),view=document.querySelector('#view');
+let currentMobile='',indexData={},unsubscribe=null,currentKey='',currentUid='',lastState='',first=true;
+
+function beep(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const a=new A(),o=a.createOscillator(),g=a.createGain();o.frequency.value=880;g.gain.value=.04;o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.12)}catch(e){}}
+function showPin(uid){results.innerHTML=`<div class="panel"><h2>Enter Digital PIN</h2><p>${esc(indexData[uid]?.shopName||'Shop')}</p><form id="pinForm" class="portal-form"><label><span>6-digit PIN</span><input id="pin" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required autofocus></label><button class="primary">Open Account</button><button type="button" class="secondary" id="back">Back</button></form></div>`;
+document.querySelector('#back').onclick=()=>form.dispatchEvent(new Event('submit',{cancelable:true}));
+document.querySelector('#pinForm').onsubmit=async e=>{e.preventDefault();const pin=document.querySelector('#pin').value.trim();if(!/^\d{6}$/.test(pin))return;try{const key=await hashText(currentMobile+'|'+pin),d=(await get(ref(db,`customerAccess/${key}`))).val(),shop=d?.shops?.[uid];if(!shop||cleanMobile(shop.account?.mobile)!==currentMobile){results.innerHTML='<div class="result-error"><b>Account not found</b><br>Wrong PIN.</div>';return}openLive(uid,key)}catch(x){results.innerHTML=`<div class="result-error">${esc(x.message)}</div>`}}}
+function openLive(uid,key){currentUid=uid;currentKey=key;results.classList.add('hidden');view.classList.remove('hidden');if(unsubscribe)unsubscribe();const r=ref(db,`customerAccess/${key}/shops/${uid}`);unsubscribe=onValue(r,s=>{const shop=s.val();if(!shop){view.innerHTML='<div class="panel result-error"><b>Account unavailable</b></div>';return}const state=JSON.stringify(shop);if(!first&&state!==lastState)beep();first=false;lastState=state;render(shop)},e=>view.innerHTML=`<div class="panel result-error">${esc(e.message)}</div>`)}
+function render(shop){const c=shop.account||{},tx=Object.values(c.transactions||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));let credit=0,paid=0,rows='';
+tx.forEach(x=>{if(x.type==='credit')credit+=+x.amount||0;else paid+=+x.amount||0;const q=+x.qty||1,u=x.unit||'pcs',mrp=+x.mrp||0;rows+=`<tr><td>${esc(formatDateTime(x.createdAt,x.date))}</td><td>${esc(x.item||'Payment')}</td><td>${x.type==='credit'?money(mrp)+' / '+esc(u):'—'}</td><td>${x.type==='credit'?esc(q+' '+u):'—'}</td><td>${x.type==='credit'?money(x.amount):'-'+money(x.amount)}</td></tr>`});
+const notes=Object.values(shop.notifications||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)),unread=notes.filter(n=>!n.read).length;
+view.innerHTML=`<div class="panel"><div class="customer-headline"><div class="avatar shop-photo-avatar">${shop.shopPhoto?`<img src="${esc(shop.shopPhoto)}" alt="">`:'🏪'}</div><div><h2>${esc(shop.shopName||'Shop')}</h2><p>${esc(c.name||'Customer')} • ${esc(c.mobile||'')}</p><small style="color:#16a34a;font-weight:800">● LIVE REAL-TIME</small></div></div><div class="stats"><div class="stat"><small>Credit</small><strong>${money(credit)}</strong></div><div class="stat"><small>Paid</small><strong>${money(paid)}</strong></div><div class="stat"><small>Balance</small><strong>${money(credit-paid)}</strong></div></div></div>
+<div class="panel"><h2>Transactions</h2><div class="tablewrap"><table><thead><tr><th>Date & Time</th><th>Item</th><th>Original Price</th><th>Qty</th><th>Total</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No transactions</td></tr>'}</tbody></table></div></div>
+<div class="panel"><h2>🔔 Notifications ${unread?`(${unread} new)`:''}</h2>${notes.length?notes.map(n=>`<div class="panel"><b>${esc(n.title||'Notification')}</b><small>${esc(formatDateTime(n.createdAt,''))}</small><p>${esc(n.message||'')}</p></div>`).join(''):'<p>No notifications yet.</p>'}</div>
+<div class="panel"><h2>💬 Messages <span id="msgCount"></span></h2><div id="customerChat" class="chatbox"></div><form id="customerChatForm" class="chatform"><input id="customerChatInput" placeholder="Message shop..." autocomplete="off" required><button class="primary">Send</button></form></div>
+<button class="secondary" id="logout">Back / Logout</button>`;
+document.querySelector('#logout').onclick=()=>location.reload();
+const chat=Object.values(shop.messages||{}).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));const cb=document.querySelector('#customerChat');cb.innerHTML=chat.length?chat.map(m=>`<div class="chatmsg ${m.sender==='customer'?'me':''}"><div>${esc(m.message||'')}</div><span class="chatmeta">${m.sender==='customer'?'You':'Shop'} • ${esc(formatDateTime(m.createdAt,''))}</span></div>`).join(''):'<p>No messages yet.</p>';cb.scrollTop=cb.scrollHeight;document.querySelector('#customerChatForm').onsubmit=async e=>{e.preventDefault();const input=document.querySelector('#customerChatInput'),msg=input.value.trim();if(!msg)return;const r=ref(db,`customerAccess/${currentKey}/shops/${currentUid}/messages`),id=push(r).key,now=Date.now();await set(ref(db,`customerAccess/${currentKey}/shops/${currentUid}/messages/${id}`),{sender:'customer',message:msg,createdAt:now,read:false});input.value='';};}
+form.onsubmit=async e=>{e.preventDefault();if(unsubscribe)unsubscribe();currentMobile=cleanMobile(document.querySelector('#mobile').value);if(currentMobile.length<7){results.innerHTML='<div class="result-error"><b>Account not found</b></div>';return}results.innerHTML='<div class="panel">Checking...</div>';try{const h=await hashText(currentMobile),d=(await get(ref(db,`customerIndex/${h}`))).val()||{},shops=Object.entries(d).filter(([,x])=>x&&x.enabled!==false);if(!shops.length){results.innerHTML='<div class="result-error"><b>Account not found</b></div>';return}indexData=Object.fromEntries(shops);results.innerHTML=`<div class="panel"><h2>Select Shop</h2><div class="customer-grid">${shops.map(([uid,x])=>`<button class="customer-card" data-uid="${esc(uid)}"><div class="avatar shop-photo-avatar">${x.shopPhoto?`<img src="${esc(x.shopPhoto)}" alt="">`:'🏪'}</div><div><h3>${esc(x.shopName||'Shop')}</h3><small>Enter PIN for this shop</small></div><strong>›</strong></button>`).join('')}</div></div>`;document.querySelectorAll('[data-uid]').forEach(b=>b.onclick=()=>showPin(b.dataset.uid))}catch(x){results.innerHTML=`<div class="result-error">${esc(x.message)}</div>`}};
 </script>
-</body>
-</html>
+</body></html>
